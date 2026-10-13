@@ -1,0 +1,16 @@
+# What to look for. Edit and re-run.
+locations: [Ireland, Dublin, Cork, Galway, Limerick, Waterford, Athlone, Shannon, Kildare, Remote]
+# A remote job is kept only if the advert mentions one of these regions.
+remote_regions: [Ireland, EMEA, Europe, EU, Worldwide, Anywhere, Global]
+categories:
+  - Data analyst
+  - Data engineer
+  - AI / ML engineer
+  - Software engineer
+  - Trust and safety
+  - Business / operations analyst
+max_years: 2                 # drop adverts asking for more years of experience than this
+include_internships: false
+languages: [English, Tamil]  # adverts that require another language are dropped
+min_score: 35                # 0-100
+exclude_title_words: []

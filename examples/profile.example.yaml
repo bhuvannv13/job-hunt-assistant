@@ -1,0 +1,54 @@
+# A structured profile gives the best tailored CVs. Everything here must be true: the tool only
+# chooses and orders this material, it never writes new claims.
+person:
+  name: Alex Example
+  title: Graduate Data Analyst
+  location: Dublin, Ireland
+  email: alex@example.com
+  phone: "+353 1 234 5678"
+  status: Eligible to work in Ireland
+  links:
+    - {label: github.com/alex-example, url: "https://github.com/alex-example"}
+    - {label: linkedin.com/in/alex-example, url: "https://www.linkedin.com/in/alex-example"}
+# Headline shown under your name, per role type (falls back to person.title)
+titles:
+  Data analyst: Graduate Data Analyst
+  Data engineer: Graduate Data Engineer
+  AI / ML engineer: Graduate Machine Learning Engineer
+# One summary per role type; "default" is used for anything else
+summaries:
+  default: Recent MSc Data Science graduate who builds data pipelines, dashboards and machine learning models.
+  Data analyst: Recent MSc Data Science graduate who turns raw data into clear reports and dashboards using SQL, Python and Tableau.
+  Data engineer: Recent MSc Data Science graduate who builds tested, automated data pipelines in Python and SQL.
+  AI / ML engineer: Recent MSc Data Science graduate who trains, evaluates and deploys machine learning models with PyTorch and scikit-learn.
+education:
+  - {degree: MSc Data Science, school: Example University, when: 2024 – 2025, grade: "First class honours"}
+skills:
+  - {group: Languages, items: [Python, SQL, R]}
+  - {group: Data, items: [pandas, NumPy, ETL pipelines, data cleaning, statistics]}
+  - {group: Machine learning, items: [scikit-learn, PyTorch, computer vision]}
+  - {group: Tools, items: [Tableau, Git, Docker, GitHub Actions]}
+experience:
+  - role: Data Analyst Intern
+    org: Example Ltd
+    where: Dublin, Ireland
+    when: Jun 2024 – Sep 2024
+    bullets:
+      - Built SQL reports and Tableau dashboards for the sales team, cutting weekly reporting time.
+      - Cleaned customer data in pandas and documented the process for the team.
+      - Presented monthly findings to sales managers.
+projects:
+  - name: Image classifier
+    year: 2025
+    tags: PyTorch · computer vision · Docker
+    links: [{label: GitHub, url: "https://github.com/alex-example/image-classifier"}]
+    bullets: [Trained a CNN in PyTorch to classify product photos and deployed it with Docker.]
+  - name: Sales forecasting dashboard
+    year: 2024
+    tags: Python · statistics · Tableau
+    links: [{label: GitHub, url: "https://github.com/alex-example/forecast"}]
+    bullets: [Forecast weekly sales with Python and presented the results in a Tableau dashboard.]
+awards: [Dean's list 2025]
+cover_letter:
+  intro: I recently completed an MSc in Data Science and enjoy turning messy data into decisions.
+  closing: I am available to start immediately.

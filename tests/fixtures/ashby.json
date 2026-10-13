@@ -1,0 +1,35 @@
+{
+ "jobs": [
+  {
+   "id": "x",
+   "title": "Analytics Engineer (Graduate)",
+   "location": "Remote",
+   "secondaryLocations": [],
+   "isRemote": true,
+   "isListed": true,
+   "descriptionPlain": "Remote across Europe (EMEA). dbt, SQL, Python and data modelling. Entry level.",
+   "publishedAt": "2026-09-29T12:00:00.000+00:00",
+   "jobUrl": "https://jobs.ashbyhq.com/ramp/x",
+   "applyUrl": "https://jobs.ashbyhq.com/ramp/x/application",
+   "employmentType": "FullTime",
+   "department": "Data"
+  },
+  {
+   "id": "y",
+   "title": "Hidden role",
+   "location": "Dublin",
+   "isListed": false,
+   "jobUrl": "https://jobs.ashbyhq.com/ramp/y",
+   "descriptionPlain": ""
+  },
+  {
+   "id": "z",
+   "title": "Remote Data Analyst",
+   "location": "Remote - US",
+   "isRemote": true,
+   "isListed": true,
+   "descriptionPlain": "Must live in the United States.",
+   "jobUrl": "https://jobs.ashbyhq.com/ramp/z"
+  }
+ ]
+}

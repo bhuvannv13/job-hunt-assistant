@@ -1,0 +1,27 @@
+{
+ "content": [
+  {
+   "id": "744",
+   "name": "Graduate Trust and Safety Analyst",
+   "releasedDate": "2026-09-27T08:00:00.000Z",
+   "location": {
+    "city": "Dublin",
+    "country": "ie",
+    "remote": false
+   },
+   "company": {
+    "name": "Visa"
+   },
+   "experienceLevel": {
+    "label": "Entry Level"
+   },
+   "typeOfEmployment": {
+    "label": "Full-time"
+   },
+   "function": {
+    "label": "Risk"
+   }
+  }
+ ],
+ "totalFound": 1
+}

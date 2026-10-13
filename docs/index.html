@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Job Hunt Assistant</title>
+<meta name="description" content="Upload your CV, see graduate and junior jobs in Ireland ranked by fit, check that employers are genuine, tailor your CV and track applications in Excel. Free and private: runs in your browser.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap bar">
+    <a class="brand" href="#">Job Hunt Assistant</a>
+    <nav>
+      <button class="tab active" data-tab="jobs">Jobs</button>
+      <button class="tab" data-tab="tracker">Tracker <span id="tracked-count" class="pill">0</span></button>
+      <button class="tab" data-tab="about">How it works</button>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <section id="tab-jobs" class="panel active">
+    <div class="intro">
+      <div>
+        <h1>Find jobs that fit your CV</h1>
+        <p class="lead">Upload your CV. Graduate and junior jobs in Ireland and remote Europe are ranked by how well they match, each employer is checked, and you get tips to tailor your CV for every advert.</p>
+        <p class="meta" id="data-meta">Loading jobs…</p>
+      </div>
+      <label class="drop" id="drop">
+        <input type="file" id="cv-file" accept=".pdf,.docx,.txt,.md" hidden>
+        <strong id="drop-title">Upload your CV</strong>
+        <span id="drop-sub">PDF, Word or text. It stays in your browser.</span>
+      </label>
+    </div>
+
+    <details class="filters" open>
+      <summary>Filters</summary>
+      <div class="grid">
+        <div>
+          <h4>Role type</h4>
+          <div id="f-cats" class="checks"></div>
+        </div>
+        <div>
+          <h4>Level</h4>
+          <div class="checks">
+            <label><input type="checkbox" id="f-entry" checked> Graduate / entry</label>
+            <label><input type="checkbox" id="f-notstated" checked> Level not stated</label>
+            <label><input type="checkbox" id="f-intern"> Internships</label>
+          </div>
+          <label class="inline">Max years asked <input type="number" id="f-years" value="2" min="0" max="10"></label>
+        </div>
+        <div>
+          <h4>Employer check</h4>
+          <div class="checks">
+            <label><input type="checkbox" id="f-verified" checked> Verified employer</label>
+            <label><input type="checkbox" id="f-official" checked> Official job board</label>
+            <label><input type="checkbox" id="f-unverified" checked> Unverified</label>
+            <label><input type="checkbox" id="f-caution"> Caution (scam signs)</label>
+          </div>
+        </div>
+        <div>
+          <h4>More</h4>
+          <label class="block">Languages I speak <input id="f-langs" value="English, Tamil"></label>
+          <label class="block">Search <input id="f-q" placeholder="e.g. SQL, Dublin, Stripe"></label>
+          <label class="block">Sort
+            <select id="f-sort"><option value="score">Best match</option><option value="date">Newest</option></select>
+          </label>
+        </div>
+      </div>
+    </details>
+
+    <p id="result-count" class="meta"></p>
+    <div id="jobs" class="jobs"></div>
+    <button id="more" class="btn ghost" hidden>Show more</button>
+  </section>
+
+  <section id="tab-tracker" class="panel">
+    <div class="tracker-head">
+      <div>
+        <h2>Your applications</h2>
+        <p class="meta">Saved in this browser only. Download the Excel tracker to keep a copy; it has the same data plus a dashboard sheet with charts.</p>
+      </div>
+      <div class="actions">
+        <button id="xlsx" class="btn primary">Download Excel tracker</button>
+        <button id="json-export" class="btn ghost">Back up (JSON)</button>
+        <label class="btn ghost">Restore<input type="file" id="json-import" accept=".json" hidden></label>
+      </div>
+    </div>
+    <p id="py-status" class="meta"></p>
+    <div class="kpis" id="kpis"></div>
+    <div class="charts">
+      <figure><figcaption>Applied or not</figcaption><canvas id="c-status"></canvas></figure>
+      <figure><figcaption>Results</figcaption><canvas id="c-results"></canvas></figure>
+      <figure class="wide"><figcaption>Applications per week</figcaption><canvas id="c-weeks"></canvas></figure>
+    </div>
+    <div class="table-wrap"><table id="tracker-table"><thead><tr>
+      <th>Role</th><th>Company</th><th>Score</th><th>Trust</th><th>Status</th><th>Date applied</th><th>Result</th><th>Notes</th><th></th>
+    </tr></thead><tbody></tbody></table></div>
+    <p id="tracker-empty" class="empty">Nothing tracked yet. Use “Track” on a job to add it here.</p>
+  </section>
+
+  <section id="tab-about" class="panel prose">
+    <h2>How it works</h2>
+    <h3>Where the jobs come from</h3>
+    <p>Every day a scheduled GitHub Actions job reads the public job boards that employers publish through their hiring systems (Greenhouse, Lever, Ashby, Workable and SmartRecruiters). These feeds exist so that anyone can list a company's openings. No site is scraped, nothing logs in, and LinkedIn and Indeed are not touched, because their terms forbid automated access. Only jobs in Ireland, or remote jobs open to Ireland, Europe or EMEA, are kept.</p>
+    <p id="about-companies"></p>
+    <h3>Is the employer genuine?</h3>
+    <ul>
+      <li><b>Verified employer</b>: the advert is on the company's own website, or the company's careers page links to the job board it came from.</li>
+      <li><b>Official job board</b>: the advert is on the company's hiring-system board, but the link from its website could not be confirmed automatically (many careers pages load jobs with scripts).</li>
+      <li><b>Unverified</b>: found through a job aggregator. Check the employer on its own website before applying.</li>
+      <li><b>Caution</b>: the advert shows scam warning signs, such as asking for a fee, contact only by WhatsApp or Telegram, or bank, PPS or passport details before an offer. Hidden by default.</li>
+    </ul>
+    <p>No automatic check is perfect. Never pay to apply and never send bank or ID details before a signed contract.</p>
+    <h3>How the match score works</h3>
+    <p>45% text similarity between your CV and the advert, 30% the share of the advert's tools and skills that your CV shows, 15% the role is a type you chose, and 10% the level suits a graduate. Adverts asking for more years than your limit, or for a language you did not list, are left out.</p>
+    <h3>Tailoring</h3>
+    <p>For each job you can see which of the advert's skills your CV already shows and which it does not. “Tailored CV” downloads a Word copy of your CV with a “Key skills for this role” line built only from skills already in your CV. The tool never adds anything you have not written. The command-line version can also reorder your projects and write a cover letter from a structured profile.</p>
+    <h3>Privacy</h3>
+    <p>Your CV and tracker never leave your browser. The Excel and Word files are built on your device with Pyodide (Python compiled to WebAssembly).</p>
+    <h3>Applying</h3>
+    <p>The assistant does not submit applications for you. Each “Apply” button opens the employer's own application page. That keeps you in control of what is sent and respects each site's rules.</p>
+    <p><a href="https://github.com/bhuvannv13/job-hunt-assistant">Source code and command-line version on GitHub</a></p>
+  </section>
+</main>
+
+<footer class="wrap foot">Built by <a href="https://bhuvannv13.github.io/">Bhuvann Vinodh Ram</a>. Job data belongs to the employers who published it.</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

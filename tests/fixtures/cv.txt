@@ -1,0 +1,20 @@
+Alex Example
+Dublin, Ireland | alex@example.com | +353 1 234 5678
+
+PROFILE
+Recent MSc Data Science graduate who builds data pipelines and machine learning models.
+
+SKILLS
+Python, SQL, pandas, scikit-learn, PyTorch, Tableau, Git, Docker, statistics
+
+EXPERIENCE
+Data Analyst Intern, Example Ltd
+- Built SQL reports and Tableau dashboards for the sales team, cutting weekly reporting time.
+- Cleaned customer data in pandas and documented the process.
+
+PROJECTS
+- Image classifier with PyTorch and computer vision techniques, deployed with Docker.
+- Forecasting dashboard using Python and statistics.
+
+EDUCATION
+MSc Data Science, Example University, 2025

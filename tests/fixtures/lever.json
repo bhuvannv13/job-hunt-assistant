@@ -1,0 +1,37 @@
+[
+ {
+  "id": "a1",
+  "text": "Junior Machine Learning Engineer",
+  "hostedUrl": "https://jobs.lever.co/palantir/a1",
+  "applyUrl": "https://jobs.lever.co/palantir/a1/apply",
+  "createdAt": 1759300000000,
+  "categories": {
+   "location": "Dublin, Ireland",
+   "team": "Engineering",
+   "commitment": "Full-time",
+   "allLocations": [
+    "Dublin, Ireland"
+   ]
+  },
+  "descriptionPlain": "We are hiring a junior ML engineer to train and deploy models.",
+  "lists": [
+   {
+    "text": "What you'll need",
+    "content": "<li>Python, PyTorch or TensorFlow</li><li>Docker and CI/CD</li><li>Computer vision or NLP experience</li>"
+   }
+  ],
+  "additionalPlain": "Graduates welcome.",
+  "workplaceType": "hybrid"
+ },
+ {
+  "id": "a2",
+  "text": "German Speaking Content Moderator",
+  "hostedUrl": "https://jobs.lever.co/palantir/a2",
+  "createdAt": 1759300000000,
+  "categories": {
+   "location": "Dublin"
+  },
+  "descriptionPlain": "Fluent German is essential. Review content against policy.",
+  "lists": []
+ }
+]

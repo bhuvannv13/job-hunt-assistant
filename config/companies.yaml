@@ -1,0 +1,106 @@
+# Employers with offices in Ireland (or that hire remotely across Europe) and the public job board
+# each one uses. `tools/check_companies.py` tests every entry and records which boards respond, how
+# many jobs they list in Ireland, and whether the company's own website links to the board. Entries
+# that stop working are reported, not silently dropped.
+#
+# To add a company: find its careers page, open any job, and look at the address of the application
+# page. boards.greenhouse.io/<token>, jobs.lever.co/<token>, jobs.ashbyhq.com/<token>,
+# apply.workable.com/<token> and jobs.smartrecruiters.com/<token> give the ATS and token.
+
+companies:
+  # Greenhouse
+  - {name: Stripe, ats: greenhouse, token: stripe, website: stripe.com}
+  - {name: Intercom, ats: greenhouse, token: intercom, website: intercom.com}
+  - {name: Datadog, ats: greenhouse, token: datadog, website: datadoghq.com}
+  - {name: Cloudflare, ats: greenhouse, token: cloudflare, website: cloudflare.com}
+  - {name: MongoDB, ats: greenhouse, token: mongodb, website: mongodb.com}
+  - {name: Squarespace, ats: greenhouse, token: squarespace, website: squarespace.com}
+  - {name: GitLab, ats: greenhouse, token: gitlab, website: gitlab.com}
+  - {name: Toast, ats: greenhouse, token: toast, website: toasttab.com}
+  - {name: Dropbox, ats: greenhouse, token: dropbox, website: dropbox.com}
+  - {name: Airbnb, ats: greenhouse, token: airbnb, website: airbnb.com}
+  - {name: Pinterest, ats: greenhouse, token: pinterest, website: pinterest.com}
+  - {name: Reddit, ats: greenhouse, token: reddit, website: reddit.com}
+  - {name: Twilio, ats: greenhouse, token: twilio, website: twilio.com}
+  - {name: Okta, ats: greenhouse, token: okta, website: okta.com}
+  - {name: Coinbase, ats: greenhouse, token: coinbase, website: coinbase.com}
+  - {name: Figma, ats: greenhouse, token: figma, website: figma.com}
+  - {name: Samsara, ats: greenhouse, token: samsara, website: samsara.com}
+  - {name: Databricks, ats: greenhouse, token: databricks, website: databricks.com}
+  - {name: Qualtrics, ats: greenhouse, token: qualtrics, website: qualtrics.com}
+  - {name: Anthropic, ats: greenhouse, token: anthropic, website: anthropic.com}
+  - {name: Tines, ats: greenhouse, token: tines, website: tines.com}
+  - {name: Wayflyer, ats: greenhouse, token: wayflyer, website: wayflyer.com}
+  - {name: Flipdish, ats: greenhouse, token: flipdish, website: flipdish.com}
+  - {name: Workhuman, ats: greenhouse, token: workhuman, website: workhuman.com}
+  - {name: Fenergo, ats: greenhouse, token: fenergo, website: fenergo.com}
+  - {name: HubSpot, ats: greenhouse, token: hubspot, website: hubspot.com}
+  - {name: Zendesk, ats: greenhouse, token: zendesk, website: zendesk.com}
+  - {name: Elastic, ats: greenhouse, token: elastic, website: elastic.co}
+  - {name: Etsy, ats: greenhouse, token: etsy, website: etsy.com}
+  - {name: Yelp, ats: greenhouse, token: yelp, website: yelp.com}
+  - {name: Duolingo, ats: greenhouse, token: duolingo, website: duolingo.com}
+  - {name: Glean, ats: greenhouse, token: gleanwork, website: glean.com}
+  - {name: Vercel, ats: greenhouse, token: vercel, website: vercel.com}
+  - {name: Grafana Labs, ats: greenhouse, token: grafanalabs, website: grafana.com}
+  - {name: Contentful, ats: greenhouse, token: contentful, website: contentful.com}
+  - {name: Zalando, ats: greenhouse, token: zalando, website: zalando.com}
+  - {name: Personio, ats: greenhouse, token: personio, website: personio.com}
+  - {name: Mastercard, ats: greenhouse, token: mastercard, website: mastercard.com}
+  - {name: Indeed, ats: greenhouse, token: indeed, website: indeed.com}
+  - {name: Trustpilot, ats: greenhouse, token: trustpilot, website: trustpilot.com}
+  - {name: Wise, ats: greenhouse, token: wise, website: wise.com}
+  - {name: Monzo, ats: greenhouse, token: monzo, website: monzo.com}
+  - {name: Deliveroo, ats: greenhouse, token: deliveroo, website: deliveroo.co.uk}
+  - {name: Bumble, ats: greenhouse, token: bumble, website: bumble.com}
+  - {name: Hopper, ats: greenhouse, token: hopper, website: hopper.com}
+  - {name: Klaviyo, ats: greenhouse, token: klaviyo, website: klaviyo.com}
+  - {name: PagerDuty, ats: greenhouse, token: pagerduty, website: pagerduty.com}
+  - {name: Udemy, ats: greenhouse, token: udemy, website: udemy.com}
+  - {name: Doctolib, ats: greenhouse, token: doctolib, website: doctolib.fr}
+  - {name: Kraken, ats: greenhouse, token: kraken, website: kraken.com}
+  # Lever
+  - {name: Palantir, ats: lever, token: palantir, website: palantir.com}
+  - {name: Spotify, ats: lever, token: spotify, website: spotify.com}
+  - {name: Plaid, ats: lever, token: plaid, website: plaid.com}
+  - {name: Teamwork, ats: lever, token: teamwork, website: teamwork.com}
+  - {name: Mistral AI, ats: lever, token: mistral, website: mistral.ai}
+  - {name: Kpler, ats: lever, token: kpler, website: kpler.com}
+  - {name: Cleo, ats: lever, token: cleo, website: meetcleo.com}
+  - {name: Swile, ats: lever, token: swile, website: swile.co}
+  - {name: Workrise, ats: lever, token: workrise, website: workrise.com}
+  - {name: Hostaway, ats: lever, token: hostaway, website: hostaway.com}
+  # Ashby
+  - {name: Ramp, ats: ashby, token: ramp, website: ramp.com}
+  - {name: Linear, ats: ashby, token: linear, website: linear.app}
+  - {name: OpenAI, ats: ashby, token: openai, website: openai.com}
+  - {name: Notion, ats: ashby, token: notion, website: notion.so}
+  - {name: PostHog, ats: ashby, token: posthog, website: posthog.com}
+  - {name: Deel, ats: ashby, token: deel, website: deel.com}
+  - {name: Evervault, ats: ashby, token: evervault, website: evervault.com}
+  - {name: Cohere, ats: ashby, token: cohere, website: cohere.com}
+  - {name: ElevenLabs, ats: ashby, token: elevenlabs, website: elevenlabs.io}
+  - {name: Synthesia, ats: ashby, token: synthesia, website: synthesia.io}
+  - {name: Supabase, ats: ashby, token: supabase, website: supabase.com}
+  - {name: Multiverse, ats: ashby, token: multiverse, website: multiverse.io}
+  - {name: Kota, ats: ashby, token: kota, website: kota.io}
+  - {name: Hex, ats: ashby, token: hex, website: hex.tech}
+  - {name: dbt Labs, ats: ashby, token: dbtlabs, website: getdbt.com}
+  # Workable
+  - {name: Phorest, ats: workable, token: phorest, website: phorest.com}
+  - {name: Manna Drone Delivery, ats: workable, token: manna-drone-delivery, website: manna.aero}
+  - {name: Nuritas, ats: workable, token: nuritas, website: nuritas.com}
+  - {name: Payslip, ats: workable, token: payslip, website: payslip.com}
+  - {name: Ding, ats: workable, token: ding, website: ding.com}
+  - {name: Codec, ats: workable, token: codec, website: codec.ie}
+  # SmartRecruiters
+  - {name: Visa, ats: smartrecruiters, token: Visa, website: visa.com}
+  - {name: ServiceNow, ats: smartrecruiters, token: ServiceNow, website: servicenow.com}
+  - {name: Bosch, ats: smartrecruiters, token: BoschGroup, website: bosch.com}
+  - {name: Equinix, ats: smartrecruiters, token: Equinix, website: equinix.com}
+  - {name: Version 1, ats: smartrecruiters, token: Version1, website: version1.com}
+  - {name: Ubisoft, ats: smartrecruiters, token: Ubisoft2, website: ubisoft.com}
+  - {name: Wolters Kluwer, ats: smartrecruiters, token: WoltersKluwer, website: wolterskluwer.com}
+  - {name: Experian, ats: smartrecruiters, token: Experian, website: experian.com}
+  - {name: Sky, ats: smartrecruiters, token: Sky, website: sky.com}
+  - {name: Abbott, ats: smartrecruiters, token: AbbottLaboratories, website: abbott.com}

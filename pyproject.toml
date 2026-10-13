@@ -1,0 +1,14 @@
+[project]
+name = "job-hunt-assistant"
+version = "0.1.0"
+description = "Find graduate jobs from official job feeds, rank them against your CV, check employers, tailor your CV and track applications in Excel."
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.10"
+dependencies = ["requests>=2.31", "pyyaml>=6.0", "scikit-learn>=1.3", "openpyxl>=3.1", "python-docx>=1.1", "pdfplumber>=0.10"]
+
+[project.scripts]
+jobhunt = "jobhunt.cli:main"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
