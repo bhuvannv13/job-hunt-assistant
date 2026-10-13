@@ -64,6 +64,8 @@ def publish_jobs(jobs: list[Job], prefs: Preferences, path: str | Path, counts: 
     records = []
     for job in local:
         job.category, job.level = category_of(job), level_of(job)
+        if job.level in ("Senior", "Mid / senior"):   # the site is for graduate and junior roles
+            continue
         record = job.to_dict()
         record["skills"] = find_skills(f"{job.title}\n{job.description}")   # before truncating
         record["years"] = required_years(job.description)
@@ -78,7 +80,7 @@ def publish_jobs(jobs: list[Job], prefs: Preferences, path: str | Path, counts: 
     Path(path).parent.mkdir(parents=True, exist_ok=True)
     Path(path).write_text(json.dumps(payload, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     write_skills(Path(path).parent / "skills.json")
-    return len(local)
+    return len(records)
 
 
 def write_skills(path: Path) -> None:

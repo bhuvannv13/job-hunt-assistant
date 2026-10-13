@@ -27,7 +27,7 @@ CATEGORIES = {
     "Software engineer": [r"software engineer", r"software developer", r"developer", r"backend", r"back-end", r"python engineer",
                           r"full[- ]stack"],
     "Trust and safety": [r"trust (?:and|&) safety", r"content moderat", r"policy (?:analyst|specialist|associate)", r"integrity",
-                         r"risk analyst", r"fraud analyst", r"investigat"],
+                         r"risk analyst", r"fraud", r"investigat", r"abuse", r"compliance (?:operations|analyst|specialist)"],
     "Business / operations analyst": [r"business analyst", r"operations analyst", r"process analyst", r"systems analyst",
                                       r"research analyst", r"quantitative analyst"],
 }
@@ -65,8 +65,18 @@ class Preferences:
         return cls(**{k: v for k, v in data.items() if k in known})
 
 
+NON_TECH = re.compile(r"\b(account executive|account manager|sales|marketing|recruit\w*|talent|business development|customer success|"
+                      r"customer support|support specialist|candidate experience|legal|counsel|paralegal|finance|financial planning|accountant|accounting|payroll|tax|"
+                      r"designer|design|product manager|program manager|project manager|people partner|human resources|hr\b|office|"
+                      r"facilities|executive assistant|communications|partnerships?|solutions? engineer|sales engineer|customer engineer)\b", re.I)
+TECH_TITLE = re.compile(r"\b(engineer|analyst|scientist|developer|associate|specialist|graduate|intern|researcher|consultant|"
+                        r"programmer|technician|moderator|reviewer|investigator)\b", re.I)
+
+
 def category_of(job: Job) -> str:
     title = job.title.lower()
+    if NON_TECH.search(title) and not re.search(r"\b(data|analytics|machine learning|ml|ai|software|trust)\b.*\b(engineer|analyst|scientist)", title):
+        return "Other"
     best_title, longest = "", 0      # the most specific phrase wins: "analytics engineer" beats "analytics"
     for name, patterns in CATEGORIES.items():
         for p in patterns:
@@ -75,13 +85,21 @@ def category_of(job: Job) -> str:
                 best_title, longest = name, len(m.group(0))
     if best_title:
         return best_title
+    if not TECH_TITLE.search(title):
+        return "Other"
     head = job.description[:1500].lower()
     best, hits = "", 0
     for name, patterns in CATEGORIES.items():
         count = sum(len(re.findall(p, head)) for p in patterns)
         if count > hits:
             best, hits = name, count
-    return best if hits >= 2 else "Other"
+    if hits >= 4:
+        return best
+    if re.search(r"\b(engineer|developer|programmer)\b", title):
+        return "Software engineer"
+    if re.search(r"\banalyst\b", title):
+        return "Business / operations analyst"
+    return "Other"
 
 
 def required_years(text: str) -> int | None:
@@ -103,14 +121,25 @@ def level_of(job: Job) -> str:
     return "Not stated"
 
 
+ELSEWHERE = re.compile(r"\b(us|usa|u\.s\.|united states|canada|mexico|brazil|latam|americas|apac|india|australia|japan|singapore|"
+                       r"united kingdom only|uk only|mid west|midwest|northeast|southeast|east coast|west coast|"
+                       r"new york|california|texas|chicago|seattle|san francisco|toronto)\b", re.I)
+
+
 def location_ok(job: Job, prefs: Preferences) -> bool:
     text = f"{job.location} {job.title}".lower()
     places = [p.lower() for p in prefs.locations if p.lower() != "remote"]
     if any(re.search(rf"\b{re.escape(p)}\b", text) for p in places) or re.search(r"\b(ie|irl)\b", job.location.lower()):
         return True
     if "remote" in [p.lower() for p in prefs.locations] and (job.remote or "remote" in text):
-        region_text = f"{job.location} {job.description[:2500]}".lower()
-        return any(re.search(rf"\b{re.escape(r.lower())}\b", region_text) for r in prefs.remote_regions)
+        if ELSEWHERE.search(f"{job.location} {job.title}"):
+            return False
+        regions = "|".join(re.escape(r.lower()) for r in prefs.remote_regions)
+        if re.search(rf"\b({regions})\b", job.location.lower()):
+            return True
+        # the advert itself must say the remote role covers one of the regions
+        return bool(re.search(rf"remote[^.\n]{{0,40}}\b({regions})\b|\b({regions})\b[^.\n]{{0,40}}remote",
+                              job.description[:4000].lower()))
     return False
 
 

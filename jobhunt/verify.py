@@ -24,6 +24,28 @@ ATS_HOSTS = ("greenhouse.io", "lever.co", "ashbyhq.com", "workable.com", "smartr
              "myworkdayjobs.com", "icims.com", "successfactors", "taleo.net", "teamtailor.com", "personio")
 
 RED_FLAGS = [
+    (r"\b(?:you|candidates?|applicants?|trainees?)\b[^.\n]{0,60}\b(?:registration|application|training|onboarding|starter[- ]kit|equipment|placement)\s+fee",
+     "asks for a fee"),
+    (r"\b(?:registration|application|training|onboarding|starter[- ]kit|placement)\s+fee\s+(?:of|is|costs?)\s*(?:€|\$|£)", "asks for a fee"),
+    (r"\byou\s+(?:will\s+)?(?:need|have|are required)\s+to\s+(?:pay|purchase|buy)\b", "asks you to pay"),
+    (r"\bpay\s+(?:a|an|the)\s+(?:small\s+|one-off\s+|refundable\s+)?(?:registration|application|training|onboarding|placement|processing)\s+(?:fee|deposit)",
+     "asks for a fee"),
+    (r"\b(?:pay|paid|send|transfer|deposit|purchase|buy)\b[^.\n]{0,40}\b(?:via|by|through|using|in|with)\s+"
+     r"(?:western union|moneygram|gift cards?|bitcoin|crypto(?:currency)?|usdt)\b", "unusual payment method"),
+    (r"\b(?:contact|message|text|reach|apply|send (?:your )?(?:cv|resume))\b[^.\n]{0,40}\b(?:on|via|through|by|using)\s+(?:whatsapp|telegram|signal)\b",
+     "contact by chat app"),
+    (r"\b(?:bank (?:account|details)|iban|sort code|pps(?:n| number)?|passport (?:number|copy)|credit card)\b"
+     r"[^.\n]{0,60}\b(?:send|provide|share|submit|required|needed)", "asks for bank or ID details"),
+    (r"\b(?:send|provide|share|submit)\b[^.\n]{0,60}\b(?:bank (?:account|details)|iban|pps(?:n| number)?|passport (?:number|copy)|credit card)\b",
+     "asks for bank or ID details"),
+    (r"\b(?:earn|make)\s+(?:€|\$|£)?\s?\d{3,}[\d,]*\s*(?:per|a|/)\s*(?:day|week)\b", "promises big daily or weekly pay"),
+    (r"\bno (?:experience|interview|qualifications?) (?:needed|required|necessary)\b.*\b(?:earn|income|cash)\b", "too good to be true"),
+    (r"\b(?:reshipping|re-shipping|package forwarding|parcel forwarding|money transfer agent|payment processing agent)\b",
+     "known scam job type"),
+    (r"\b(?:apply|send|email|contact|cv|resume)\b[^.\n]{0,60}[\w.+-]+@(?:gmail|yahoo|hotmail|outlook|live|aol|proton(?:mail)?|icloud)\.\w+",
+     "personal email address for applications"),
+]
+_FLAGS = [
     (r"(?:registration|application|training|onboarding|starter[- ]kit|equipment)\s+fee", "asks for a fee"),
     (r"pay (?:a|the|for)\s+(?:fee|deposit|training|equipment)", "asks you to pay"),
     (r"\b(?:western union|moneygram|gift cards?|bitcoin|crypto(?:currency)? payment|usdt)\b", "unusual payment method"),
@@ -62,9 +84,12 @@ def assess(job: Job, company_info: dict | None = None) -> tuple[str, list[str]]:
     flags = red_flags(job)
     host = domain(job.url)
     website = domain("https://" + (company_info or {}).get("website", "").replace("https://", "").replace("http://", ""))
-    if flags:
-        return "Caution", [f"Warning sign: {f}" for f in flags]
     on_ats = any(h in host for h in ATS_HOSTS) or job.source in ("greenhouse", "lever", "ashby", "workable", "smartrecruiters")
+    # An advert on a known employer's own hiring board needs two independent warning signs before it is
+    # treated as suspicious (a payments company may legitimately mention crypto); anything else needs one.
+    if flags and (len(flags) >= 2 or not (on_ats and company_info)):
+        return "Caution", [f"Warning sign: {f}" for f in flags]
+    evidence += [f"Mentions something that can be a warning sign ({f}); read the advert" for f in flags]
     on_company_domain = bool(website) and (host == website or host.endswith("." + website))
     if on_company_domain:
         evidence.append(f"Advert is hosted on the company's own website ({host})")

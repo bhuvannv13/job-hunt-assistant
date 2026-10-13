@@ -54,7 +54,7 @@ def _relevance(job_text: str, candidates: list[str]) -> list[float]:
     return [float(s) + 0.05 * len(advert_skills & set(find_skills(c))) for s, c in zip(scores, candidates)]
 
 
-def tailor_profile(profile: dict, job: Job, max_projects: int = 4, max_bullets: int = 2) -> dict:
+def tailor_profile(profile: dict, job: Job, max_projects: int = 4, max_bullets: int = 2, max_skill_groups: int = 6) -> dict:
     """Return a new profile dict ordered and trimmed for this job."""
     job_text = f"{job.title}\n{job.title}\n{job.description}"
     advert_skills = find_skills(job_text)
@@ -89,6 +89,7 @@ def tailor_profile(profile: dict, job: Job, max_projects: int = 4, max_bullets: 
         ordered = [i for i in items if hit(i)] + [i for i in items if not hit(i)]
         skills.append({"group": group.get("group"), "items": ordered, "hits": sum(hit(i) for i in items)})
     skills.sort(key=lambda g: -g["hits"])
+    skills = skills[:max_skill_groups]
 
     return {**profile, "summary": summary, "experience": experience, "projects": chosen, "other_projects": others,
             "skills": skills, "key_skills": have, "target_category": job.category,
