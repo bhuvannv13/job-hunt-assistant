@@ -36,8 +36,11 @@ ENTRY = re.compile(r"\b(graduate|grad|entry[- ]level|junior|jr\.?|associate|trai
 INTERN = re.compile(r"\b(intern|internship|placement|co-?op|summer)\b", re.I)
 SENIOR = re.compile(r"\b(senior|sr\.?|staff|principal|lead|manager|director|head|vp|vice president|architect|chief|"
                     r"expert|iii|iv|level 3|l3|l4|l5)\b", re.I)
-YEARS = re.compile(r"(\d{1,2})\s*(?:\+|plus)?\s*(?:-|to|–)?\s*(?:\d{1,2})?\s*\+?\s*years?(?:['’]s)?\s*(?:of\s+)?"
-                   r"(?:relevant\s+|professional\s+|proven\s+|hands-on\s+|industry\s+|work\s+)*(?:experience|exp)", re.I)
+YEARS = re.compile(r"(\d{1,2})\s*(?:\+|plus)?\s*(?:-|to|–)?\s*(?:\d{1,2})?\s*\+?\s*years?(?:['’]s)?\s+(?:of\s+)?"
+                   r"(?:[\w/&-]+\s+){0,4}?(?:experience|exp)\b", re.I)
+YEARS_PLUS = re.compile(r"\b(\d{1,2})\s*\+\s*years?\b", re.I)   # "5+ years building production services"
+NOT_FOR_GRADS = re.compile(r"(?:intern|new grad|graduate|early[- ]career)[^.\n]{0,80}(?:do not|don't|should not|shouldn't)\s+apply|"
+                           r"not (?:suitable|open) (?:for|to) (?:new )?grad", re.I)
 LANGUAGES = ["German", "French", "Spanish", "Italian", "Dutch", "Portuguese", "Polish", "Swedish", "Danish", "Norwegian",
              "Finnish", "Japanese", "Korean", "Mandarin", "Chinese", "Cantonese", "Arabic", "Hebrew", "Turkish", "Russian",
              "Czech", "Hungarian", "Romanian", "Greek", "Thai", "Vietnamese", "Indonesian", "Hindi", "Tamil", "Irish"]
@@ -103,8 +106,10 @@ def category_of(job: Job) -> str:
 
 
 def required_years(text: str) -> int | None:
-    values = [int(m.group(1)) for m in YEARS.finditer(text or "") if int(m.group(1)) <= 20]
-    return min(values) if values else None
+    """The strictest experience requirement stated in the advert (e.g. "4+ years of Go" and "2+ years of auth" gives 4)."""
+    values = [int(m.group(1)) for m in YEARS.finditer(text or "")] + [int(m.group(1)) for m in YEARS_PLUS.finditer(text or "")]
+    values = [v for v in values if v <= 15]
+    return max(values) if values else None
 
 
 def level_of(job: Job) -> str:
@@ -113,11 +118,13 @@ def level_of(job: Job) -> str:
         return "Internship"
     if SENIOR.search(title):
         return "Senior"
-    if ENTRY.search(title) or re.search(r"graduate|entry level|early career", job.description[:600], re.I):
-        return "Graduate / entry"
+    if NOT_FOR_GRADS.search(job.description):
+        return "Mid / senior"
     years = required_years(job.description)
     if years is not None and years >= 3:
         return "Mid / senior"
+    if ENTRY.search(title) or re.search(r"\b(graduates?|entry[- ]level|early[- ]careers?|new grads?|recent grad\w*)\b", job.description[:3000], re.I):
+        return "Graduate / entry"
     return "Not stated"
 
 

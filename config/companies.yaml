@@ -46,21 +46,8 @@ companies:
   - {name: PagerDuty, ats: greenhouse, token: pagerduty, website: pagerduty.com}
   - {name: Udemy, ats: greenhouse, token: udemy, website: udemy.com}
   - {name: Doctolib, ats: greenhouse, token: doctolib, website: doctolib.fr}
-  - {name: Dataminr, ats: greenhouse, token: dataminr, website: dataminr.com}
-  - {name: LetsGetChecked, ats: greenhouse, token: letsgetchecked, website: letsgetchecked.com}
-  - {name: CarTrawler, ats: greenhouse, token: cartrawler, website: cartrawler.com}
   - {name: Wrike, ats: greenhouse, token: wrike, website: wrike.com}
-  - {name: Kitman Labs, ats: greenhouse, token: kitmanlabs, website: kitmanlabs.com}
-  - {name: Learnosity, ats: greenhouse, token: learnosity, website: learnosity.com}
-  - {name: Clio, ats: greenhouse, token: clio, website: clio.com}
-  - {name: Integral Ad Science, ats: greenhouse, token: integralads, website: integralads.com}
-  - {name: Susquehanna, ats: greenhouse, token: sig, website: sig.com}
-  - {name: Remote, ats: greenhouse, token: remotecom, website: remote.com}
-  - {name: Rapid7, ats: greenhouse, token: rapid7, website: rapid7.com}
-  - {name: Squarespace Ireland, ats: greenhouse, token: squarespaceireland, website: squarespace.com}
   # Lever
-  - {name: Workvivo, ats: lever, token: workvivo, website: workvivo.com}
-  - {name: Toast Dublin, ats: lever, token: toast, website: toasttab.com}
   - {name: Palantir, ats: lever, token: palantir, website: palantir.com}
   - {name: Spotify, ats: lever, token: spotify, website: spotify.com}
   - {name: Kpler, ats: lever, token: kpler, website: kpler.com}
@@ -80,12 +67,8 @@ companies:
   - {name: Kota, ats: ashby, token: kota, website: kota.io}
   - {name: Hex, ats: ashby, token: hex, website: hex.tech}
   - {name: Fin, ats: ashby, token: fin, website: fin.ai}
-  - {name: Tines (Ashby), ats: ashby, token: tines, website: tines.com}
   # Workable
-  - {name: TransferMate, ats: workable, token: transfermate, website: transfermate.com}
-  - {name: Glofox, ats: workable, token: glofox, website: glofox.com}
-  - {name: Wayflyer (Workable), ats: workable, token: wayflyer, website: wayflyer.com}
-  # SmartRecruiters
+  # SmartRecruiters (searched for Ireland only, so a board with no Irish openings today shows as empty)
   - {name: Visa, ats: smartrecruiters, token: Visa, website: visa.com}
   - {name: ServiceNow, ats: smartrecruiters, token: ServiceNow, website: servicenow.com}
   - {name: Bosch, ats: smartrecruiters, token: BoschGroup, website: bosch.com}

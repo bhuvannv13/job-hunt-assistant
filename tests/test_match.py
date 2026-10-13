@@ -34,6 +34,11 @@ def test_levels_and_years():
     assert level_of(job("Summer Internship - Data")) == "Internship"
     assert required_years("at least 3 years of relevant experience") == 3
     assert required_years("0-2 years experience") == 0
+    assert required_years("Have 4+ years of professional experience writing Go. Have 2+ years of professional experience on auth") == 4
+    assert required_years("5 -6 years total engineering experience") == 5
+    assert required_years("ideally with 5+ years building production services") == 5
+    assert level_of(job("Backend Engineer", "If you are an intern or new grad, please do not apply using this link.")) == "Mid / senior"
+    assert level_of(job("Software Engineer 2", "Recent graduates or professionals with up to 18 months of experience")) == "Graduate / entry"
 
 
 def test_categories():
