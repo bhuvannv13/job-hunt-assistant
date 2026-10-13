@@ -54,19 +54,34 @@ def _relevance(job_text: str, candidates: list[str]) -> list[float]:
     return [float(s) + 0.05 * len(advert_skills & set(find_skills(c))) for s, c in zip(scores, candidates)]
 
 
-def tailor_profile(profile: dict, job: Job, max_projects: int = 4, max_bullets: int = 2, max_skill_groups: int = 6) -> dict:
+SOFT = {"Research", "Communication", "Reporting", "Agile"}   # never listed as "key skills" on their own
+
+
+def _pick(job_text: str, bullets: list[str], k: int) -> list[str]:
+    """Most relevant bullets first, skipping ones that repeat an already chosen point; original order kept."""
+    if len(bullets) <= 1:
+        return list(bullets)
+    from sklearn.feature_extraction.text import TfidfVectorizer
+    from sklearn.metrics.pairwise import cosine_similarity
+    scores = _relevance(job_text, bullets)
+    sim = cosine_similarity(TfidfVectorizer(stop_words="english").fit_transform(bullets))
+    chosen = []
+    for i in sorted(range(len(bullets)), key=lambda i: -scores[i]):
+        if all(sim[i][j] < 0.45 for j in chosen):
+            chosen.append(i)
+        if len(chosen) == k:
+            break
+    return [bullets[i] for i in sorted(chosen)]
+
+
+def tailor_profile(profile: dict, job: Job, max_projects: int = 4, max_bullets: int = 2, max_skill_groups: int = 7) -> dict:
     """Return a new profile dict ordered and trimmed for this job."""
     job_text = f"{job.title}\n{job.title}\n{job.description}"
     advert_skills = find_skills(job_text)
     summaries = profile.get("summaries") or {}
     summary = summaries.get(job.category) or summaries.get("default") or next(iter(summaries.values()), "")
 
-    experience = []
-    for item in profile.get("experience", []):
-        bullets = item.get("bullets", [])
-        scores = _relevance(job_text, bullets)
-        keep = sorted(range(len(bullets)), key=lambda i: -scores[i])[:max_bullets]
-        experience.append({**item, "bullets": [bullets[i] for i in sorted(keep)]})
+    experience = [{**item, "bullets": _pick(job_text, item.get("bullets", []), max_bullets)} for item in profile.get("experience", [])]
 
     projects = profile.get("projects", [])
     proj_texts = [" ".join([p.get("name", ""), p.get("tags", "")] + p.get("bullets", [])) for p in projects]
@@ -75,12 +90,10 @@ def tailor_profile(profile: dict, job: Job, max_projects: int = 4, max_bullets: 
     chosen = []
     for i in order[:max_projects]:
         p = projects[i]
-        b_scores = _relevance(job_text, p.get("bullets", []))
-        keep = sorted(range(len(p.get("bullets", []))), key=lambda k: -b_scores[k])[:max_bullets]
-        chosen.append({**p, "bullets": [p["bullets"][k] for k in sorted(keep)]})
+        chosen.append({**p, "bullets": _pick(job_text, p.get("bullets", []), max_bullets)})
     others = [projects[i] for i in order[max_projects:max_projects + 4]]
 
-    have = [s for s in advert_skills if s in find_skills(profile_text(profile))]
+    have = [s for s in advert_skills if s in find_skills(profile_text(profile)) and s not in SOFT]
     skills = []
     for group in profile.get("skills", []):
         items = group.get("items", [])
