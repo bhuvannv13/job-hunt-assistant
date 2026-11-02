@@ -1,0 +1,69 @@
+name: Notify me about new jobs
+
+# Runs after the daily job refresh, and at midday and in the evening to catch new alert emails.
+# Everything personal comes from repository secrets (Settings > Secrets and variables > Actions):
+#   PROFILE_YAML    your profile (copy examples/profile.example.yaml) - or CV_TEXT with your CV as plain text
+#   NTFY_TOPIC      a long, hard-to-guess topic name you subscribe to in the ntfy app (push notifications)
+#   SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASSWORD, NOTIFY_TO   email digest (optional)
+#   IMAP_USER, IMAP_PASSWORD                                     read job-alert emails (optional)
+# Without PROFILE_YAML / CV_TEXT the job does nothing. The log only shows counts, never job titles.
+
+on:
+  workflow_run:
+    workflows: ["Refresh jobs"]
+    types: [completed]
+  schedule:
+    - cron: "41 11 * * *"
+    - cron: "41 18 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: notify
+  cancel-in-progress: false
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -r requirements.txt
+      - name: Remember which jobs were already notified
+        uses: actions/cache@v4
+        with:
+          path: output/notified.json
+          key: notified-${{ github.run_id }}
+          restore-keys: notified-
+      - name: Write profile from secrets
+        id: profile
+        env:
+          PROFILE_YAML: ${{ secrets.PROFILE_YAML }}
+          CV_TEXT: ${{ secrets.CV_TEXT }}
+        run: |
+          mkdir -p output
+          if [ -n "$PROFILE_YAML" ]; then printf '%s' "$PROFILE_YAML" > output/profile.yaml; echo "arg=--profile output/profile.yaml" >> "$GITHUB_OUTPUT";
+          elif [ -n "$CV_TEXT" ]; then printf '%s' "$CV_TEXT" > output/cv.txt; echo "arg=--cv output/cv.txt" >> "$GITHUB_OUTPUT";
+          else echo "No PROFILE_YAML or CV_TEXT secret: nothing to match against."; fi
+      - name: Send notifications
+        if: steps.profile.outputs.arg != ''
+        env:
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+          NOTIFY_TO: ${{ secrets.NOTIFY_TO }}
+          IMAP_USER: ${{ secrets.IMAP_USER }}
+          IMAP_PASSWORD: ${{ secrets.IMAP_PASSWORD }}
+        run: |
+          EMAILS=""
+          if [ -n "$IMAP_USER" ]; then EMAILS="--emails"; fi
+          python -m jobhunt notify ${{ steps.profile.outputs.arg }} $EMAILS
+      - name: Delete personal files
+        if: always()
+        run: rm -f output/profile.yaml output/cv.txt && rm -rf output/notify_attachments

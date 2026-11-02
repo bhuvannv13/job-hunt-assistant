@@ -4,6 +4,7 @@
     python -m jobhunt fetch                      # collect jobs and write docs/data/jobs.json
     python -m jobhunt match --cv my_cv.pdf       # rank jobs for a CV, tailor CVs, build the Excel tracker
     python -m jobhunt match --profile me.yaml    # same, using a structured profile for better tailoring
+    python -m jobhunt notify --profile me.yaml   # push / email new jobs that fit you (add --emails for alert emails)
 """
 from __future__ import annotations
 
@@ -118,6 +119,39 @@ def cmd_match(args):
     print(json.dumps(summary, indent=1))
 
 
+def cmd_notify(args):
+    from . import cv as cvmod
+    from . import notify
+    from .skills import find_skills
+    from .sources import email_alerts
+    from .tailor import load_profile, profile_text
+
+    if not (args.cv or args.profile):
+        sys.exit("Give --cv (PDF/DOCX/TXT) or --profile (YAML)")
+    profile = load_profile(args.profile) if args.profile else None
+    cv = cvmod.load(args.cv) if args.cv else None
+    text = "\n".join(t for t in [profile_text(profile) if profile else "", cv.text if cv else ""] if t)
+    jobs = pipeline.load_jobs(args.jobs) if Path(args.jobs).exists() else []
+    alerts = email_alerts.from_eml_dir(args.eml_dir) if args.eml_dir else []
+    if args.emails:
+        alerts += email_alerts.fetch_imap(days=args.days)
+    pipeline.check_trust(alerts, {})
+    settings = notify.NotifySettings.load(args.config)
+    state = notify.load_state(args.state)
+    new = notify.select_new(jobs + alerts, text, find_skills(text), pipeline.load_preferences(args.prefs), settings, state)
+    if args.dry_run:
+        print(notify.digest_text(new) if new else "No new matching jobs.")
+        return
+    report = notify.deliver(new, settings, profile, Path(args.out))
+    today = datetime.now(timezone.utc).date().isoformat()
+    from .sources.email_alerts import dedupe_key
+    state.update({dedupe_key(j): today for j in new})
+    notify.save_state(args.state, state, settings.remember_days)
+    # Counts only: workflow logs of a public repository must not show which jobs you are applying for.
+    print(f"Checked {len(jobs)} board jobs and {len(alerts)} alert-email jobs; {len(new)} new matches; "
+          f"push notifications sent: {report['ntfy']}; digest emails sent: {report['email']}.")
+
+
 def main(argv=None):
     logging.basicConfig(level=logging.WARNING, format="%(levelname)s %(message)s")
     parser = argparse.ArgumentParser(prog="jobhunt", description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -142,6 +176,19 @@ def main(argv=None):
     m.add_argument("--tailor", type=int, default=10, help="how many top jobs get a tailored CV and cover letter")
     m.add_argument("--include-caution", action="store_true", help="keep jobs with scam warning signs")
     m.set_defaults(func=cmd_match)
+    n = sub.add_parser("notify", help="send push / email notifications about new jobs that fit you")
+    n.add_argument("--cv")
+    n.add_argument("--profile")
+    n.add_argument("--jobs", default=DATA / "jobs.json")
+    n.add_argument("--prefs", default=ROOT / "config" / "preferences.yaml")
+    n.add_argument("--config", default=ROOT / "config" / "notify.yaml")
+    n.add_argument("--state", default="output/notified.json", help="remembers which jobs you were already told about")
+    n.add_argument("--out", default="output")
+    n.add_argument("--emails", action="store_true", help="also read job-alert emails over IMAP (IMAP_USER, IMAP_PASSWORD)")
+    n.add_argument("--days", type=int, default=2, help="how many days of alert emails to read")
+    n.add_argument("--eml-dir", help="folder of saved job-alert .eml files to read")
+    n.add_argument("--dry-run", action="store_true", help="print the digest instead of sending it")
+    n.set_defaults(func=cmd_notify)
     args = parser.parse_args(argv)
     args.func(args)
 

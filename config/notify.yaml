@@ -1,0 +1,10 @@
+# Notifications about new jobs (python -m jobhunt notify). Edit and re-run.
+min_score: 50          # only jobs scoring at least this much against your profile (0-100)
+max_per_run: 10        # at most this many jobs per notification run
+include_trust:         # employer checks that may be notified ("Caution" jobs are never sent)
+  - Verified employer
+  - Official job board
+  - Unverified         # jobs from alert emails and aggregators: confirm the employer before applying
+attach_cvs: 3          # email a tailored CV + cover letter for the top N matches (needs --profile)
+remember_days: 60      # a job is not notified again within this many days
+channels: [ntfy, email]

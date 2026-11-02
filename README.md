@@ -24,6 +24,32 @@ It is free to run: a daily GitHub Actions job collects the jobs, GitHub Pages ho
 
 LinkedIn, Indeed and most job sites forbid bots in their terms of use, and an automated application can send the wrong thing in your name. This tool never logs in, never scrapes and never submits. Each **Apply** button opens the employer's own application page so that you stay in control.
 
+What it does instead is get everything ready: notifications (below) arrive with the match score, the skills you have and lack, and, by email, a tailored CV and cover letter for the best matches. Applying is then a few clicks on the employer's own page.
+
+## Get notified about new jobs
+
+`python -m jobhunt notify` tells you about new jobs that fit your profile, at most once per job.
+
+| Source | How |
+|---|---|
+| Official job boards | the jobs collected every day by `fetch` |
+| Your job-alert emails | Glassdoor, Indeed, LinkedIn, gradireland, Jobs.ie and IrishJobs email you the jobs that match the alerts on your own account. With `--emails` the tool reads those emails over IMAP, **read-only** (nothing is marked read, moved or deleted). The same advert from several sites is notified once. |
+
+Every job is scored with the same rules as `match`, filtered by [`config/notify.yaml`](config/notify.yaml) (minimum score, employer check, how many per run) and sent through:
+
+* **Push to your phone** with the free [ntfy](https://ntfy.sh) app: subscribe to a long, hard-to-guess topic name and set `NTFY_TOPIC`. Each notification opens the advert.
+* **Email digest** over SMTP (`SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`, `NOTIFY_TO`), with a tailored CV and cover letter attached for the top matches when you use `--profile`.
+
+```bash
+python -m jobhunt notify --profile my_profile.yaml --dry-run          # print what would be sent
+IMAP_USER=you@gmail.com IMAP_PASSWORD=app-password NTFY_TOPIC=my-long-topic \
+  python -m jobhunt notify --profile my_profile.yaml --emails
+```
+
+For Gmail, IMAP needs an [app password](https://myaccount.google.com/apppasswords) (2-step verification on); never use your normal password.
+
+**Running it automatically.** The workflow [`.github/workflows/notify.yml`](.github/workflows/notify.yml) runs after the daily refresh and twice more a day. Add these repository secrets (Settings > Secrets and variables > Actions): `PROFILE_YAML` (or `CV_TEXT`), `NTFY_TOPIC` and, if you want them, the SMTP and IMAP settings. Secrets never appear in the public repository; the log prints only counts, and the list of jobs already notified is kept in the Actions cache, not committed.
+
 ## Is the employer genuine?
 
 | Label | Meaning |
@@ -82,13 +108,14 @@ output/
 
 ```
 jobhunt/
-  sources/          one parser per job board + optional aggregators
+  sources/          one parser per job board, optional aggregators and job-alert emails
   skills.py         skill vocabulary (regular expressions)
   cv.py             read PDF / Word / text CVs and split sections
   match.py          filters and the score
   verify.py         employer and scam checks
   tailor.py         tailored CV and cover letter (Word)
   tracker.py        Excel workbook with dashboard
+  notify.py         push and email notifications about new matches
   pipeline.py, cli.py
 docs/               the website (GitHub Pages) and the daily data
 tests/              pytest suite with recorded API samples
