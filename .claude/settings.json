@@ -1,0 +1,36 @@
+{
+  "permissions": {
+    "allow": [
+      "Skill(job-application)",
+      "Bash(python -m jobhunt:*)",
+      "Bash(python3 -m jobhunt:*)",
+      "Read(private/**)",
+      "Edit(private/**)",
+      "Write(private/**)"
+    ],
+    "ask": [
+      "Edit(.claude/**)",
+      "Edit(jobhunt/**)",
+      "Edit(.github/**)",
+      "Bash(git push:*)",
+      "Bash(git add:*)"
+    ],
+    "deny": [
+      "Bash(git add private:*)",
+      "Bash(git add -f private:*)",
+      "Read(.env)",
+      "Read(.env.*)",
+      "Read(~/.ssh/**)",
+      "Read(~/.aws/**)",
+      "Bash(curl -d:*)",
+      "Bash(curl --data:*)",
+      "Bash(curl -F:*)",
+      "Bash(curl -X POST:*)",
+      "Bash(curl --upload-file:*)",
+      "Bash(wget --post-data:*)",
+      "Bash(scp:*)",
+      "Bash(ssh:*)",
+      "Bash(nc:*)"
+    ]
+  }
+}

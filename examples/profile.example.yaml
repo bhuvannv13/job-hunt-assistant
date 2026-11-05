@@ -52,3 +52,24 @@ awards: [Dean's list 2025]
 cover_letter:
   intro: I recently completed an MSc in Data Science and enjoy turning messy data into decisions.
   closing: I am available to start immediately.
+
+# ---- Optional: used by the Claude commands (/rank, /apply, /interview) ----
+# Right-to-work gate. Say exactly what you hold and until when.
+work_authorisation: Stamp 1G, valid to 2027-12-31; needs an employment permit after that
+languages:
+  - {language: English, level: fluent}
+max_years: 2                 # skip jobs asking for more than this many years above your experience
+deal_breakers:
+  - Fully on-site more than 60 km from Dublin
+  - Unpaid internships
+target_sectors: [fintech, healthcare, public sector]
+salary: {floor: 35000, currency: EUR}
+notice_period: one month
+# Short true stories for interviews: Situation, Task, Action, Result (real numbers only)
+star_stories:
+  - title: Faster weekly reporting
+    situation: Sales team spent hours each week building reports by hand.
+    task: Automate the weekly report during my internship.
+    action: Wrote SQL queries and a Tableau dashboard that refreshed automatically.
+    result: Weekly reporting time went from about 4 hours to 30 minutes.
+writing_style: Plain, direct, Irish English spelling; short sentences; no buzzwords.

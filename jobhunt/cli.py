@@ -152,6 +152,104 @@ def cmd_notify(args):
           f"push notifications sent: {report['ntfy']}; digest emails sent: {report['email']}.")
 
 
+def _profile_text(args) -> str:
+    from . import cv as cvmod
+    from .tailor import load_profile, profile_text
+    profile = load_profile(args.profile) if getattr(args, "profile", None) else None
+    cv = cvmod.load(args.cv) if getattr(args, "cv", None) else None
+    return "\n".join(t for t in [profile_text(profile) if profile else "", cv.text if cv else ""] if t)
+
+
+def cmd_guard(args):
+    from . import guard
+    content = Path(args.input).read_text(encoding="utf-8", errors="replace") if args.input else sys.stdin.read()
+    result = guard.check(content, is_html=args.html)
+    if args.json:
+        print(json.dumps(result.to_dict(), ensure_ascii=False, indent=1))
+    else:
+        print(guard.format_report(result))
+        if args.cleaned:
+            print("\n--- cleaned posting ---\n" + result.cleaned)
+    if args.out:
+        Path(args.out).write_text(result.cleaned, encoding="utf-8")
+
+
+def cmd_render(args):
+    import yaml
+    from . import tailor
+    outputs = []
+    if args.tailored:
+        data = yaml.safe_load(Path(args.tailored).read_text(encoding="utf-8"))
+        outputs.append(tailor.write_tailored_docx(data, args.cv_out))
+    if args.letter:
+        text = Path(args.letter).read_text(encoding="utf-8")
+        outputs.append(tailor.write_text_docx(text, args.letter_out, title=args.letter_title or ""))
+    for path in outputs:
+        pdf = tailor.to_pdf(path) if args.pdf else None
+        print(f"wrote {path}" + (f" and {pdf}" if pdf else " (PDF needs LibreOffice)" if args.pdf else ""))
+
+
+def cmd_ats(args):
+    from . import ats
+    posting = Path(args.posting).read_text(encoding="utf-8") if args.posting else ""
+    report = ats.check(args.file, posting, args.keyword or [], args.email or "", args.phone or "")
+    print(json.dumps(report.to_dict(), indent=1) if args.json else ats.format_report(report))
+
+
+def cmd_app(args):
+    from . import applications as A
+    csv_path, archive = Path(args.csv), Path(args.archive)
+    if args.action == "add":
+        app = A.add(args.company, args.role, csv_path, archive, status=args.status or "considering",
+                    **{k: v for k, v in dict(url=args.url, location=args.location, source=args.source, score=args.score,
+                                            channel=args.channel, sector=args.sector, notes=args.notes,
+                                            next_step=args.next_step).items() if v})
+        print(f"added {app.id} -> {archive / app.folder}")
+    elif args.action == "update":
+        values = {k: v for k, v in dict(status=args.status, url=args.url, score=args.score, channel=args.channel,
+                                        sector=args.sector, notes=args.notes, next_step=args.next_step).items() if v}
+        app = A.update(args.key, csv_path, archive, note=args.note or "", **values)
+        print(f"updated {app.id}: {app.status}")
+    elif args.action == "followup-sent":
+        app = A.record_followup(args.key, csv_path, archive)
+        print(f"{app.id}: follow-ups sent {app.followups_sent}")
+    elif args.action == "followups":
+        due = A.followups_due(A.load(csv_path), args.days)
+        print(json.dumps([{**{k: getattr(a, k) for k in ("id", "company", "role", "status", "followups_sent", "folder")},
+                           "days_quiet": d} for a, d in due], indent=1))
+    elif args.action == "import":
+        import csv as csvmod
+        with open(args.file, newline="", encoding="utf-8") as fh:
+            print(f"imported {A.import_rows(list(csvmod.DictReader(fh)), csv_path)} application(s)")
+    else:   # list
+        apps = A.load(csv_path)
+        if args.json:
+            print(json.dumps([vars(a) for a in apps], indent=1))
+        else:
+            for a in apps:
+                print(f"{a.status:16} {a.date_applied or a.status_date:10}  {a.company} – {a.role}  [{a.id}]")
+            print(json.dumps(A.summary(apps, archive)))
+
+
+def cmd_report(args):
+    from . import report
+    print(f"wrote {report.write(args.out, args.csv, args.archive, args.days)}")
+
+
+def cmd_upskill(args):
+    from . import upskill
+    if not (args.cv or args.profile):
+        sys.exit("Give --cv or --profile")
+    jobs = pipeline.load_jobs(args.jobs)
+    if args.extra_jobs:
+        jobs += pipeline.load_jobs(args.extra_jobs)
+    gap_list, strengths, n = upskill.gaps(jobs, _profile_text(args), pipeline.load_preferences(args.prefs), args.top)
+    if args.json:
+        print(json.dumps({"jobs": n, "strengths": strengths, "gaps": [{**vars(g), "priority": g.priority} for g in gap_list]}, indent=1))
+    else:
+        print(upskill.markdown(gap_list, strengths, n, args.limit))
+
+
 def main(argv=None):
     logging.basicConfig(level=logging.WARNING, format="%(levelname)s %(message)s")
     parser = argparse.ArgumentParser(prog="jobhunt", description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -189,6 +287,63 @@ def main(argv=None):
     n.add_argument("--eml-dir", help="folder of saved job-alert .eml files to read")
     n.add_argument("--dry-run", action="store_true", help="print the digest instead of sending it")
     n.set_defaults(func=cmd_notify)
+
+    g = sub.add_parser("guard", help="check a job posting for hidden text and instructions aimed at AI tools")
+    g.add_argument("--in", dest="input", help="file to check (default: read stdin)")
+    g.add_argument("--html", action="store_true", help="the input is an HTML page")
+    g.add_argument("--json", action="store_true")
+    g.add_argument("--cleaned", action="store_true", help="also print the cleaned posting text")
+    g.add_argument("--out", help="write the cleaned posting text to this file")
+    g.set_defaults(func=cmd_guard)
+
+    r = sub.add_parser("render", help="build Word (and PDF) files from a tailored CV YAML and a cover letter text")
+    r.add_argument("--tailored", help="tailored profile YAML written by /apply")
+    r.add_argument("--cv-out", default="output/CV.docx")
+    r.add_argument("--letter", help="cover letter as plain text / markdown")
+    r.add_argument("--letter-out", default="output/Cover_letter.docx")
+    r.add_argument("--letter-title", default="")
+    r.add_argument("--pdf", action="store_true", help="also convert to PDF with LibreOffice")
+    r.set_defaults(func=cmd_render)
+
+    a = sub.add_parser("ats-check", help="check that a CV's text layer is readable by applicant tracking systems")
+    a.add_argument("file", help="CV as .pdf, .docx or .txt")
+    a.add_argument("--posting", help="posting text file, to check keyword coverage")
+    a.add_argument("--keyword", action="append", help="extra keyword to look for (repeatable)")
+    a.add_argument("--email")
+    a.add_argument("--phone")
+    a.add_argument("--json", action="store_true")
+    a.set_defaults(func=cmd_ats)
+
+    t = sub.add_parser("app", help="application tracker: add, update, list, followups, followup-sent, import")
+    t.add_argument("action", choices=["add", "update", "list", "followups", "followup-sent", "import"])
+    t.add_argument("key", nargs="?", help="application id or a unique part of 'company role' (update / followup-sent)")
+    t.add_argument("--company"); t.add_argument("--role"); t.add_argument("--url"); t.add_argument("--location")
+    t.add_argument("--source"); t.add_argument("--score"); t.add_argument("--status"); t.add_argument("--channel")
+    t.add_argument("--sector"); t.add_argument("--notes"); t.add_argument("--next-step", dest="next_step")
+    t.add_argument("--note", help="line for the outcome log (update)")
+    t.add_argument("--days", type=int, default=10, help="quiet days before a follow-up is due")
+    t.add_argument("--file", help="CSV to import (columns: company, role, status, date_applied, url, notes, channel)")
+    t.add_argument("--json", action="store_true")
+    t.add_argument("--csv", default="private/applications.csv")
+    t.add_argument("--archive", default="private/applications")
+    t.set_defaults(func=cmd_app)
+
+    h = sub.add_parser("report", help="offline HTML dashboard of your applications")
+    h.add_argument("--out", default="private/report.html")
+    h.add_argument("--csv", default="private/applications.csv")
+    h.add_argument("--archive", default="private/applications")
+    h.add_argument("--days", type=int, default=10)
+    h.set_defaults(func=cmd_report)
+
+    u = sub.add_parser("upskill", help="skill gaps across the jobs that fit you best")
+    u.add_argument("--cv"); u.add_argument("--profile")
+    u.add_argument("--jobs", default=DATA / "jobs.json")
+    u.add_argument("--extra-jobs", help="another jobs.json, e.g. postings saved by /rank")
+    u.add_argument("--prefs", default=ROOT / "config" / "preferences.yaml")
+    u.add_argument("--top", type=int, default=60)
+    u.add_argument("--limit", type=int, default=20)
+    u.add_argument("--json", action="store_true")
+    u.set_defaults(func=cmd_upskill)
     args = parser.parse_args(argv)
     args.func(args)
 

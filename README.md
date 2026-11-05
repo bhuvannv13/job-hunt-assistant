@@ -100,6 +100,31 @@ output/
   cover_letters/          one cover letter per top job (.docx)
 ```
 
+## Use it with Claude Code
+
+Open the folder in [Claude Code](https://claude.com/claude-code) and the workspace in `CLAUDE.md` turns it into a job search assistant with slash commands. Claude does the reading and writing; the Python tools above do the counting, checking and file building, so results are repeatable.
+
+| Command | What happens |
+|---|---|
+| `/setup` | Builds `private/profile.yaml` from your CV and documents (or by asking you) |
+| `/scrape` | Fetches the boards, optionally your job-alert emails, and shows the best matches |
+| `/rank` | Fit check of a batch of postings: right-to-work, language, experience and deal-breaker gates, then five weighted scores |
+| `/apply <link>` | Evaluation, company research, tailored CV and cover letter, an independent reviewer pass, Word/PDF files and an ATS check |
+| `/interview <job>` | Prep pack for the interview stage and an optional mock interview |
+| `/outcome <job> <news>` | Updates the tracker and drafts follow-ups, thank-you notes and feedback requests |
+| `/gmail-sync` | Reads recent application emails and proposes tracker updates for you to approve |
+| `/report` | Offline HTML dashboard of your pipeline |
+| `/upskill` | Skill-gap heatmap across your best-fit jobs and a learning plan |
+
+Safeguards built in:
+
+- **You submit.** Claude drafts; it never applies, sends emails, logs in or ticks consent boxes.
+- **Nothing invented.** Every claim must trace to your profile; a reviewer agent checks each draft before it is rendered.
+- **Postings are untrusted.** `python -m jobhunt guard` strips invisible characters and hidden HTML and flags text aimed at AI tools before Claude reads a posting.
+- **Private stays private.** Your profile, tracker and application files live in `private/`, which is git-ignored.
+
+The command layer is inspired by [ai-job-search](https://github.com/ai-job-search-dev/ai-job-search) (MIT), adapted for the Irish job market.
+
 ## Settings
 
 [`config/preferences.yaml`](config/preferences.yaml) sets locations, the regions a remote job must mention, role types, the maximum years of experience, internships, languages you speak and the minimum score. To add employers, put their board in [`config/companies.yaml`](config/companies.yaml). The comments explain how to find the board name from any job link.
@@ -116,7 +141,15 @@ jobhunt/
   tailor.py         tailored CV and cover letter (Word)
   tracker.py        Excel workbook with dashboard
   notify.py         push and email notifications about new matches
+  guard.py          posting integrity check (hidden text, instructions aimed at AI)
+  applications.py   application tracker (CSV + one folder per application)
+  report.py         offline HTML dashboard of applications
+  upskill.py        skill-gap analysis across top jobs
+  ats.py            CV text-layer and keyword check
   pipeline.py, cli.py
+CLAUDE.md           workspace rules for Claude Code
+.claude/            slash commands, agents, the job-application skill and permissions
+private/            your data (git-ignored, created by /setup)
 docs/               the website (GitHub Pages) and the daily data
 tests/              pytest suite with recorded API samples
 ```

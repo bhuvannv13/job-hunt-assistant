@@ -4,3 +4,7 @@ __pycache__/
 output/
 my_profile.yaml
 *.local.yaml
+
+# Personal data: profile, tracker, applications, research (never commit)
+private/
+.claude/settings.local.json
