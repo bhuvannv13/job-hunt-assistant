@@ -96,9 +96,14 @@ def build(apps: list[appsmod.Application], archive: str | Path = appsmod.ARCHIVE
     channel = Counter(a.channel or "Not recorded" for a in apps if a.status != "considering").most_common(8)
     sector = Counter(a.sector or "Not recorded" for a in apps if a.status != "considering").most_common(8)
     due = appsmod.followups_due(apps, quiet_days, today)
+    def role_cell(a):
+        if a.url.startswith("http"):
+            return f'<a href="{esc(a.url)}" rel="noopener noreferrer">{esc(a.role)}</a>'
+        return esc(a.role)
+
     rows = "".join(
         f'<tr data-status="{esc(a.status)}"><td>{esc(a.date_applied or a.status_date)}</td><td>{esc(a.company)}</td>'
-        f'<td>{f"<a href=\"{esc(a.url)}\" rel=\"noopener noreferrer\">{esc(a.role)}</a>" if a.url.startswith("http") else esc(a.role)}</td>'
+        f'<td>{role_cell(a)}</td>'
         f'<td><span class="pill s-{esc(a.status)}">{esc(STATUS_LABEL.get(a.status, a.status))}</span></td>'
         f'<td>{esc(a.score)}</td><td>{esc(a.channel)}</td><td>{esc(a.next_step)}</td></tr>'
         for a in sorted(apps, key=lambda a: a.date_applied or a.status_date, reverse=True))
