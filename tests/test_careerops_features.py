@@ -78,3 +78,41 @@ def test_reposts():
             {"company": "Acme", "title": "Data Analyst", "url": "u2", "posted": "2026-10-15"},
             {"company": "Beta", "title": "Data Analyst", "url": "u3", "posted": "2026-10-15"}]
     assert [f["company"] for f in patterns.reposts(hist)] == ["Acme"]
+
+
+def test_duplicate_application_detection():
+    from jobhunt.applications import find_duplicate
+    apps = [Application(id="a", company="Accenture", role="Trust & Safety Associate - CL12", url="https://x.com/job/1?src=li")]
+    assert find_duplicate(apps, "Accenture Ireland", "Trust & Safety Associate CL12") is apps[0]
+    assert find_duplicate(apps, "Other", "Analyst", url="https://x.com/job/1") is apps[0]
+    assert find_duplicate(apps, "Accenture", "Data Engineer") is None
+
+
+def test_factcheck_flags_invented_numbers_and_names(tmp_path):
+    from jobhunt import factcheck
+    profile = tmp_path / "profile.yaml"
+    profile.write_text("experience: Research Intern at University College Dublin, 2025. ECG CNN 96.01% accuracy on 21,892 beats.")
+    cv = tmp_path / "cv.md"
+    cv.write_text("Research Intern, University College Dublin (2025). ECG CNN reached 96.01% on 21892 beats. "
+                  "Cut processing costs by 37% at Globex Corporation.")
+    r = factcheck.check(cv, [profile])
+    assert not r.ok
+    assert [n.split()[0] for n in r.unsupported_numbers] == ["37%"]
+    assert any(n.startswith("Globex Corporation") for n in r.unsupported_names)
+    assert not any("University College" in n for n in r.unsupported_names)
+    assert factcheck.check(cv, [profile], allow=["37", "Globex Corporation"]).ok
+
+
+def test_ats_page_limit(tmp_path):
+    from jobhunt import ats
+    f = tmp_path / "cv.txt"
+    f.write_text("x " * 400 + " me@example.com +353 89 000 0000")
+    assert ats.check(f, expect_email="me@example.com", max_pages=2).ok   # text files have no pages: no false alarm
+
+
+def test_ats_flags_lost_digits_and_dots(tmp_path):
+    from jobhunt import ats
+    f = tmp_path / "cv.txt"
+    f.write_text("Experienced analyst. " * 30 + " me@gmailcom")
+    problems = " ".join(ats.check(f).problems)
+    assert "No digits" in problems

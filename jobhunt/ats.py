@@ -6,6 +6,7 @@ extracts that text the way a parser would and checks:
 * the text layer is there and clean (no (cid:..) glyph codes, no replacement characters)
 * your email and phone appear as literal text, not only as an icon or a link
 * which skills from the posting are present in the CV text, and which are missing
+* the page count, when you give a limit (two pages for a CV, one for a cover letter)
 
 It never edits the CV. Missing keywords are a prompt to add them only where they are true.
 """
@@ -58,14 +59,21 @@ def extract(path: str | Path) -> tuple[str, int | None]:
 
 
 def check(path: str | Path, posting_text: str = "", extra_keywords: list[str] | None = None,
-          expect_email: str = "", expect_phone: str = "") -> AtsReport:
+          expect_email: str = "", expect_phone: str = "", max_pages: int | None = None) -> AtsReport:
     text, pages = extract(path)
     report = AtsReport(file=str(path), characters=len(text.strip()), pages=pages)
+    if max_pages and pages and pages > max_pages:
+        report.problems.append(f"{pages} pages: the limit is {max_pages}. Cut the least relevant lines for this posting.")
     if report.characters < 300:
         report.problems.append("Very little text could be extracted: the CV may be an image or use unreadable fonts.")
     cid = len(re.findall(r"\(cid:\d+\)", text))
     if cid:
         report.problems.append(f"{cid} unreadable glyph code(s) like (cid:123): change the font or how it is embedded.")
+    if report.characters >= 300 and not re.search(r"\d", text):
+        report.problems.append("No digits at all in the text layer (dates, phone, grades are lost): a font feature such as "
+                               "tabular numbers, or a web font without a Unicode map, is hiding them. Switch it off or change font.")
+    elif re.search(r"[\w-]@[\w-]+(?:com|ie|org|net)\b", text):
+        report.problems.append("Dots are missing from the text layer (e.g. 'gmailcom'): some punctuation glyphs have no Unicode map.")
     if "�" in text:
         report.problems.append("Replacement characters (�) in the text: some characters do not survive extraction.")
     flat = re.sub(r"\s+", "", text)

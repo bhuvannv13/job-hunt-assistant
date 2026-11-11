@@ -52,4 +52,5 @@ python -m jobhunt upskill --profile private/profile.yaml
 python -m jobhunt live <url> [--tracker]                  # is the posting still open? (API first, then the page)
 python -m jobhunt workauth --in posting.md --permit "Stamp 1G"   # right-to-work blockers, quoted
 python -m jobhunt patterns                                # funnel, rejection patterns, ghosted applications
+python -m jobhunt factcheck CV.pdf --source private/profile.yaml --source private/documents   # unsupported numbers/names
 ```

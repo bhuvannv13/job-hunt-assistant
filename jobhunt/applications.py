@@ -92,8 +92,42 @@ def find(apps: list[Application], key: str) -> Application | None:
     return loose[0] if len(loose) == 1 else None
 
 
-def add(company: str, role: str, path: str | Path = CSV_PATH, archive: str | Path = ARCHIVE, **values) -> Application:
+class DuplicateApplication(ValueError):
+    def __init__(self, existing: "Application"):
+        super().__init__(f"Already tracked: {existing.company} – {existing.role} [{existing.id}], status {existing.status}. "
+                         "Use update, or add --force if this really is a different job.")
+        self.existing = existing
+
+
+_COMPANY_NOISE = re.compile(r"\b(ltd|limited|inc|plc|llc|gmbh|dac|uc|group|ireland|europe|emea)\b|[^a-z0-9 ]")
+_ROLE_NOISE = re.compile(r"\b(m/f/d|f/m/d|h/f|remote|hybrid|dublin|ireland|\d{4})\b|[^a-z0-9 ]")
+
+
+def _words(text: str, noise: re.Pattern) -> set[str]:
+    return set(noise.sub(" ", text.lower()).split())
+
+
+def find_duplicate(apps: list["Application"], company: str, role: str, url: str = "") -> "Application | None":
+    """Same posting link, or the same company with a near-identical role title."""
+    url = url.strip().rstrip("/").split("?")[0]
+    comp, words = _words(company, _COMPANY_NOISE), _words(role, _ROLE_NOISE)
+    for app in apps:
+        if url and app.url and app.url.strip().rstrip("/").split("?")[0] == url:
+            return app
+        if comp and _words(app.company, _COMPANY_NOISE) == comp:
+            other = _words(app.role, _ROLE_NOISE)
+            if words and other and len(words & other) / len(words | other) >= 0.7:
+                return app
+    return None
+
+
+def add(company: str, role: str, path: str | Path = CSV_PATH, archive: str | Path = ARCHIVE, force: bool = False,
+        **values) -> Application:
     apps = load(path)
+    if not force:
+        existing = find_duplicate(apps, company, role, values.get("url", ""))
+        if existing:
+            raise DuplicateApplication(existing)
     base = slug(company, role)
     folder, n = base, 2
     while any(a.folder == folder for a in apps):

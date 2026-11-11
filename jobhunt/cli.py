@@ -8,6 +8,7 @@
     python -m jobhunt live URL [--tracker]       # is the posting still open?
     python -m jobhunt workauth --in posting.md --permit "Stamp 1G"   # right-to-work blockers
     python -m jobhunt patterns                   # funnel and rejection patterns from your tracker
+    python -m jobhunt factcheck CV.pdf --source private/profile.yaml   # numbers/names not in your sources
 """
 from __future__ import annotations
 
@@ -195,18 +196,30 @@ def cmd_render(args):
 def cmd_ats(args):
     from . import ats
     posting = Path(args.posting).read_text(encoding="utf-8") if args.posting else ""
-    report = ats.check(args.file, posting, args.keyword or [], args.email or "", args.phone or "")
+    report = ats.check(args.file, posting, args.keyword or [], args.email or "", args.phone or "", args.max_pages)
     print(json.dumps(report.to_dict(), indent=1) if args.json else ats.format_report(report))
+
+
+def cmd_factcheck(args):
+    from . import factcheck
+    sources = args.source or ["private/profile.yaml", "private/documents"]
+    report = factcheck.check(args.file, [s for s in sources if Path(s).exists()], args.allow)
+    print(json.dumps(report.to_dict(), indent=1) if args.json else factcheck.format_report(report))
+    if not report.ok:
+        sys.exit(1)
 
 
 def cmd_app(args):
     from . import applications as A
     csv_path, archive = Path(args.csv), Path(args.archive)
     if args.action == "add":
-        app = A.add(args.company, args.role, csv_path, archive, status=args.status or "considering",
+        try:
+            app = A.add(args.company, args.role, csv_path, archive, force=args.force, status=args.status or "considering",
                     **{k: v for k, v in dict(url=args.url, location=args.location, source=args.source, score=args.score,
                                             channel=args.channel, sector=args.sector, notes=args.notes,
                                             next_step=args.next_step).items() if v})
+        except A.DuplicateApplication as exc:
+            sys.exit(str(exc))
         print(f"added {app.id} -> {archive / app.folder}")
     elif args.action == "update":
         values = {k: v for k, v in dict(status=args.status, url=args.url, score=args.score, channel=args.channel,
@@ -354,8 +367,16 @@ def main(argv=None):
     a.add_argument("--keyword", action="append", help="extra keyword to look for (repeatable)")
     a.add_argument("--email")
     a.add_argument("--phone")
+    a.add_argument("--max-pages", type=int, help="flag a CV longer than this (2 for a CV, 1 for a cover letter)")
     a.add_argument("--json", action="store_true")
     a.set_defaults(func=cmd_ats)
+
+    fc = sub.add_parser("factcheck", help="list numbers and names in a CV or letter that are not in your own sources")
+    fc.add_argument("file", help="CV or cover letter (.pdf, .docx, .md, .txt)")
+    fc.add_argument("--source", action="append", default=[], help="profile, document or folder to check against (repeatable)")
+    fc.add_argument("--allow", action="append", default=[], help="extra allowed text, e.g. the employer's name")
+    fc.add_argument("--json", action="store_true")
+    fc.set_defaults(func=cmd_factcheck)
 
     t = sub.add_parser("app", help="application tracker: add, update, list, followups, followup-sent, import")
     t.add_argument("action", choices=["add", "update", "list", "followups", "followup-sent", "import"])
@@ -367,6 +388,7 @@ def main(argv=None):
     t.add_argument("--days", type=int, default=10, help="quiet days before a follow-up is due")
     t.add_argument("--file", help="CSV to import (columns: company, role, status, date_applied, url, notes, channel)")
     t.add_argument("--json", action="store_true")
+    t.add_argument("--force", action="store_true", help="add even if a similar application is already tracked")
     t.add_argument("--csv", default="private/applications.csv")
     t.add_argument("--archive", default="private/applications")
     t.set_defaults(func=cmd_app)

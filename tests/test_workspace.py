@@ -55,7 +55,12 @@ def test_tracker_add_update_followups_and_csv_safety(tmp_path):
     raw = csv_path.read_text()
     assert "'=HYPERLINK" in raw
     assert A.load(csv_path)[0].notes.startswith("=HYPERLINK")
-    A.add("Acme", "Data Analyst", csv_path, arch)                       # same name -> new folder
+    try:                                                                # same job twice is refused...
+        A.add("Acme Ltd", "Data Analyst (Dublin)", csv_path, arch)
+        assert False
+    except A.DuplicateApplication as exc:
+        assert exc.existing.folder == "Acme_Data_Analyst"
+    A.add("Acme", "Data Analyst", csv_path, arch, force=True)           # ...unless forced -> new folder
     assert [x.folder for x in A.load(csv_path)] == ["Acme_Data_Analyst", "Acme_Data_Analyst_2"]
     A.update("Acme_Data_Analyst", csv_path, arch, note="phone screen booked", status="interview_1")
     assert "| interview_1 | phone screen booked |" in (arch / "Acme_Data_Analyst" / "outcome.md").read_text()
