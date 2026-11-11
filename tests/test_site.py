@@ -3,7 +3,7 @@ import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-BROWSER_MODULES = ["__init__.py", "models.py", "skills.py", "match.py", "cv.py", "tracker.py", "tailor.py"]
+BROWSER_MODULES = ["__init__.py", "models.py", "skills.py", "match.py", "workauth.py", "cv.py", "tracker.py", "tailor.py"]
 
 
 def test_browser_copies_match_package():

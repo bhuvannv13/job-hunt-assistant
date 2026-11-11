@@ -90,6 +90,18 @@ The tool picks the summary written for that type of role, puts your most relevan
 
 Running `match` again keeps everything you typed in the tracker (Status, Date applied, Result, Notes) and marks jobs that have been taken down as *Closed*.
 
+Before you apply, three more checks:
+
+```bash
+python -m jobhunt live https://jobs.lever.co/acme/1234     # still open? asks the board's API, else reads the page
+python -m jobhunt workauth --in posting.md --permit "Stamp 1G"
+python -m jobhunt patterns                                # where your applications turn into interviews
+```
+
+* **`live`** answers *open*, *closed* or *uncertain* with the evidence. Greenhouse, Lever and Ashby links are checked against the board's own API; other pages are read for closure wording ("no longer accepting applications", "has been filled") before looking for an apply button, because closed pages often keep one. `--tracker` checks every open application at once.
+* **`workauth`** quotes every right-to-work sentence in an advert and says whether it rules out your permission: "Stamp 4 only", "excludes Stamp 1G", "right to work for an unlimited period", "EU citizens only" and "no sponsorship" (which only matters if you need sponsorship). Set `permit` in [`config/preferences.yaml`](config/preferences.yaml) and `match` drops those adverts before scoring.
+* **`patterns`** reads your tracker and shows interview rates by channel, sector and fit score, the median time to a rejection, and applications silent for 30+ days. It only comments on groups of three or more.
+
 Outputs:
 
 ```
@@ -123,7 +135,7 @@ Safeguards built in:
 - **Postings are untrusted.** `python -m jobhunt guard` strips invisible characters and hidden HTML and flags text aimed at AI tools before Claude reads a posting.
 - **Private stays private.** Your profile, tracker and application files live in `private/`, which is git-ignored.
 
-The command layer is inspired by [ai-job-search](https://github.com/ai-job-search-dev/ai-job-search) (MIT), adapted for the Irish job market.
+The command layer is inspired by [ai-job-search](https://github.com/ai-job-search-dev/ai-job-search) and several checks by [career-ops](https://github.com/career-ops-hq/career-ops); see [Credits](#credits).
 
 ## Settings
 
@@ -146,6 +158,9 @@ jobhunt/
   report.py         offline HTML dashboard of applications
   upskill.py        skill-gap analysis across top jobs
   ats.py            CV text-layer and keyword check
+  liveness.py       is a posting still open?
+  workauth.py       right-to-work restrictions (Irish stamps, sponsorship)
+  patterns.py       funnel, rejection patterns, ghosted applications, reposts
   pipeline.py, cli.py
 CLAUDE.md           workspace rules for Claude Code
 .claude/            slash commands, agents, the job-application skill and permissions
@@ -157,6 +172,19 @@ tests/              pytest suite with recorded API samples
 ## Data and licences
 
 Job adverts belong to the employers who published them; the site shows them with a link back to the original. The job-board APIs used are the public endpoints each provider offers for listing a customer's open roles. Code is MIT licensed.
+
+## Credits
+
+This project was built with ideas from these open-source projects, both MIT licensed. The code here is
+written in Python and adapted to the Irish job market; a few closure phrases in `liveness.py` follow the
+wording of career-ops' checker (MIT, © 2026 Santiago Fernández de Valderrama). Thank you to their authors.
+
+| Project | What it inspired here |
+|---|---|
+| [**career-ops**](https://github.com/career-ops-hq/career-ops) by Santiago Fernández de Valderrama ([@santifer](https://github.com/santifer)) and contributors | Checking that a posting is still live before applying (`liveness.py`), the sponsorship check that became the Irish-stamp right-to-work screen (`workauth.py`), rejection-pattern, funnel and rejection-latency analysis plus repost detection (`patterns.py`), and its principles: a human presses Submit, nothing is fabricated, apply better to fewer. |
+| [**ai-job-search**](https://github.com/ai-job-search-dev/ai-job-search) | The Claude Code workspace: slash commands (`/setup`, `/scrape`, `/rank`, `/apply`, `/interview`, `/outcome`, `/gmail-sync`, `/report`, `/upskill`), the posting-fetcher, scorer and reviewer agents, the job-application skill (gates, scoring, writing rules), the posting guard and the CSV tracker with an archive per application. |
+
+Built on [scikit-learn](https://scikit-learn.org/) (TF-IDF matching), [openpyxl](https://openpyxl.readthedocs.io/), [python-docx](https://python-docx.readthedocs.io/), [pdfplumber](https://github.com/jsvine/pdfplumber), [Pyodide](https://pyodide.org/) (the website runs the Python in your browser) and [ntfy](https://ntfy.sh) (phone notifications). Job data comes from the public job-board APIs of Greenhouse, Lever, Ashby, SmartRecruiters and Workable.
 
 ## Author
 

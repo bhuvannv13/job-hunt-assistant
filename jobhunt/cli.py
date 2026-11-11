@@ -5,6 +5,9 @@
     python -m jobhunt match --cv my_cv.pdf       # rank jobs for a CV, tailor CVs, build the Excel tracker
     python -m jobhunt match --profile me.yaml    # same, using a structured profile for better tailoring
     python -m jobhunt notify --profile me.yaml   # push / email new jobs that fit you (add --emails for alert emails)
+    python -m jobhunt live URL [--tracker]       # is the posting still open?
+    python -m jobhunt workauth --in posting.md --permit "Stamp 1G"   # right-to-work blockers
+    python -m jobhunt patterns                   # funnel and rejection patterns from your tracker
 """
 from __future__ import annotations
 
@@ -250,6 +253,46 @@ def cmd_upskill(args):
         print(upskill.markdown(gap_list, strengths, n, args.limit))
 
 
+def cmd_live(args):
+    from . import applications as A, liveness
+    urls = list(args.urls)
+    if args.tracker:
+        urls += [a.url for a in A.load(args.csv) if a.url.startswith("http") and a.status in ({"considering"} | A.OPEN)]
+    if not urls:
+        sys.exit("Give one or more URLs, or --tracker")
+    session = requests.Session()
+    with ThreadPoolExecutor(max_workers=6) as pool:
+        results = list(pool.map(lambda u: liveness.check(u, session), dict.fromkeys(urls)))
+    if args.json:
+        print(json.dumps([r.to_dict() for r in results], indent=1))
+    else:
+        for r in results:
+            print(f"{r.status:9}  {r.url}\n           {r.evidence}")
+
+
+def cmd_workauth(args):
+    from . import workauth
+    text = Path(args.input).read_text(encoding="utf-8") if args.input else sys.stdin.read()
+    found = workauth.restrictions(text)
+    blocked = workauth.blocker(text, args.permit) if args.permit else None
+    if args.json:
+        print(json.dumps({"restrictions": [{"kind": r.kind, "label": r.label, "evidence": r.evidence} for r in found],
+                          "blocked": blocked.label if blocked else None}, indent=1))
+        return
+    if not found:
+        print("No right-to-work restrictions found in the advert.")
+    for r in found:
+        print(f"- {r.label}: \"{r.evidence}\"")
+    if args.permit:
+        print(f"\nVerdict for {args.permit}: " + (f"DO NOT APPLY ({blocked.label})" if blocked else "no blocker found"))
+
+
+def cmd_patterns(args):
+    from . import applications as A, patterns
+    result = patterns.analyse(A.load(args.csv), args.archive)
+    print(json.dumps(result, indent=1) if args.json else patterns.format_text(result))
+
+
 def main(argv=None):
     logging.basicConfig(level=logging.WARNING, format="%(levelname)s %(message)s")
     parser = argparse.ArgumentParser(prog="jobhunt", description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -344,6 +387,25 @@ def main(argv=None):
     u.add_argument("--limit", type=int, default=20)
     u.add_argument("--json", action="store_true")
     u.set_defaults(func=cmd_upskill)
+
+    lv = sub.add_parser("live", help="check whether postings are still open before you apply")
+    lv.add_argument("urls", nargs="*")
+    lv.add_argument("--tracker", action="store_true", help="also check open and considering applications in the tracker")
+    lv.add_argument("--csv", default="private/applications.csv")
+    lv.add_argument("--json", action="store_true")
+    lv.set_defaults(func=cmd_live)
+
+    w = sub.add_parser("workauth", help="find right-to-work restrictions (Stamp 4 only, excludes Stamp 1G, no sponsorship...)")
+    w.add_argument("--in", dest="input", help="posting text file (default: read stdin)")
+    w.add_argument("--permit", help="your permission, e.g. 'Stamp 1G', 'Stamp 4', 'EU', 'needs sponsorship'")
+    w.add_argument("--json", action="store_true")
+    w.set_defaults(func=cmd_workauth)
+
+    pt = sub.add_parser("patterns", help="funnel and rejection patterns from the application tracker")
+    pt.add_argument("--csv", default="private/applications.csv")
+    pt.add_argument("--archive", default="private/applications")
+    pt.add_argument("--json", action="store_true")
+    pt.set_defaults(func=cmd_patterns)
     args = parser.parse_args(argv)
     args.func(args)
 

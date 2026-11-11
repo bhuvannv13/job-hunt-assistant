@@ -237,7 +237,7 @@
     await pyodide.loadPackage("micropip");
     await pyodide.runPythonAsync("import micropip\nawait micropip.install(['openpyxl', 'python-docx'])");
     pyodide.FS.mkdirTree("/home/pyodide/jobhunt");
-    for (const f of ["__init__.py", "models.py", "skills.py", "match.py", "cv.py", "tracker.py", "tailor.py"]) {
+    for (const f of ["__init__.py", "models.py", "skills.py", "match.py", "workauth.py", "cv.py", "tracker.py", "tailor.py"]) {
       const res = await fetch("py/jobhunt/" + f); if (!res.ok) throw new Error("Missing " + f);
       pyodide.FS.writeFile("/home/pyodide/jobhunt/" + f, await res.text());
     }

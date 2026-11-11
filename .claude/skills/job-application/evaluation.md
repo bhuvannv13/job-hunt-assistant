@@ -1,9 +1,17 @@
 # Evaluating a job
 
+First check the posting is still open: `python -m jobhunt live <url>`. If it says `closed`, stop and
+tell the person (quote the evidence). `uncertain` is not a stop: say so and continue.
+
 Run the four gates in order. A failed gate stops the evaluation: report it with the posting's exact
 words quoted, and do not score or draft. Only then score the five dimensions.
 
 ## Gate 1 - Right to work
+
+Start with `python -m jobhunt workauth --in posting.md --permit "<profile permission>"`. It quotes every
+right-to-work sentence it finds; a `DO NOT APPLY` verdict ("Stamp 4 only", "excludes Stamp 1G", "unlimited
+right to work") is a **FAIL** unless the person's permission has changed. Then read the wording yourself, because
+the tool only catches common phrasings.
 
 Read the profile's `work_authorisation` (e.g. `Stamp 1G, valid to 2027-12-31; needs an employment
 permit after that`) and the posting's eligibility wording.
@@ -11,6 +19,7 @@ permit after that`) and the posting's eligibility wording.
 | Posting says | Verdict |
 |---|---|
 | Citizenship, permanent residency or a security clearance required | **FAIL** |
+| Excludes the candidate's stamp by name, or asks for Stamp 4 / an unlimited right to work the candidate does not hold | **FAIL** |
 | "No sponsorship" / "must already have the right to work" and the candidate's current permission covers the role's start and a reasonable term | **PASS, note** the end date of the permission |
 | "No sponsorship" and the permission ends before or soon after the start | **FLAG**: the person decides |
 | Names the candidate's permission, or says visas/sponsorship considered | **PASS** (a positive worth noting) |

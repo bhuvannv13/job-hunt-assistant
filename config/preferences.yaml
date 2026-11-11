@@ -14,3 +14,6 @@ include_internships: false
 languages: [English, Tamil]  # adverts that require another language are dropped
 min_score: 35                # 0-100
 exclude_title_words: []
+# Your immigration permission, e.g. "Stamp 1G", "Stamp 4", "EU" or "needs sponsorship".
+# Adverts that rule it out ("Stamp 4 only", "excludes Stamp 1G", "no sponsorship") are dropped. Empty = no check.
+permit: ""

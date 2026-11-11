@@ -49,4 +49,7 @@ python -m jobhunt ats-check cv.pdf --posting posting.md --email ... --phone ...
 python -m jobhunt app add|update|list|followups|followup-sent|import ...
 python -m jobhunt report                                  # private/report.html
 python -m jobhunt upskill --profile private/profile.yaml
+python -m jobhunt live <url> [--tracker]                  # is the posting still open? (API first, then the page)
+python -m jobhunt workauth --in posting.md --permit "Stamp 1G"   # right-to-work blockers, quoted
+python -m jobhunt patterns                                # funnel, rejection patterns, ghosted applications
 ```

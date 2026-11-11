@@ -7,8 +7,9 @@ The score (0-100) combines four signals, each explained in Job.reasons:
 * whether the role is in a category the user wants (15%)
 * whether the level suits a graduate or junior candidate (10%)
 
-Jobs outside the user's locations, above the experience limit, or needing a language the
-user does not speak are filtered out before scoring, and the reason is recorded.
+Jobs outside the user's locations, above the experience limit, needing a language the user does
+not speak, or excluding the user's right to work (see workauth.py) are filtered out before scoring,
+and the reason is recorded.
 """
 from __future__ import annotations
 
@@ -17,6 +18,7 @@ from dataclasses import dataclass, field
 
 from .models import Job
 from .skills import find_skills
+from . import workauth
 
 CATEGORIES = {
     "Data analyst": [r"data analyst", r"business intelligence", r"\bbi\b", r"analytics", r"insights? analyst", r"reporting analyst",
@@ -60,6 +62,7 @@ class Preferences:
     languages: list[str] = field(default_factory=lambda: ["English"])
     min_score: float = 35.0
     exclude_title_words: list[str] = field(default_factory=list)
+    permit: str = ""             # e.g. "Stamp 1G", "Stamp 4", "EU", "needs sponsorship"; empty skips the check
 
     @classmethod
     def from_dict(cls, data: dict | None) -> "Preferences":
@@ -181,6 +184,10 @@ def screen(job: Job, prefs: Preferences) -> str | None:
     language = language_barrier(job, prefs)
     if language:
         return f"needs {language}"
+    if prefs.permit:
+        blocked = workauth.blocker(job.description, prefs.permit)
+        if blocked:
+            return f"right to work: {blocked.label}"
     return None
 
 
@@ -220,7 +227,8 @@ def rank(jobs: list[Job], cv_text: str, cv_skills: list[str], prefs: Preferences
         seen.add(key)
         reason = screen(job, prefs)
         if reason:
-            bucket = reason if not reason.startswith("needs ") else "language"
+            bucket = ("language" if reason.startswith("needs ") else
+                      "right to work" if reason.startswith("right to work") else reason)
             dropped[bucket] = dropped.get(bucket, 0) + 1
         else:
             kept.append(job)
