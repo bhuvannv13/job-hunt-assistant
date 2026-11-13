@@ -38,7 +38,7 @@ ENTRY = re.compile(r"\b(graduate|grad|entry[- ]level|junior|jr\.?|associate|trai
 INTERN = re.compile(r"\b(intern|internship|placement|co-?op|summer)\b", re.I)
 SENIOR = re.compile(r"\b(senior|sr\.?|staff|principal|lead|manager|director|head|vp|vice president|architect|chief|"
                     r"expert|iii|iv|level 3|l3|l4|l5)\b", re.I)
-YEARS = re.compile(r"(\d{1,2})\s*(?:\+|plus)?\s*(?:-|to|–)?\s*(?:\d{1,2})?\s*\+?\s*years?(?:['’]s)?\s+(?:of\s+)?"
+YEARS = re.compile(r"(\d{1,2})\s*(?:\+|plus)?\s*(?:-|to|–)?\s*(?:\d{1,2})?\s*\+?\s*years?(?:['’]s?)?\s+(?:of\s+)?"
                    r"(?:[\w/&-]+\s+){0,4}?(?:experience|exp)\b", re.I)
 YEARS_PLUS = re.compile(r"\b(\d{1,2})\s*\+\s*years?\b", re.I)   # "5+ years building production services"
 NOT_FOR_GRADS = re.compile(r"(?:intern|new grad|graduate|early[- ]career)[^.\n]{0,80}(?:do not|don't|should not|shouldn't)\s+apply|"
@@ -108,8 +108,16 @@ def category_of(job: Job) -> str:
     return "Other"
 
 
+_NUMBER_WORDS = {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7, "eight": 8,
+                 "nine": 9, "ten": 10}
+_WORD_YEARS = re.compile(r"\b(" + "|".join(_NUMBER_WORDS) + r")(?=\s*(?:\(\d+\)\s*)?\+?\s*(?:-|to|–)?\s*\w*\s*years?\b)", re.I)
+
+
 def required_years(text: str) -> int | None:
-    """The strictest experience requirement stated in the advert (e.g. "4+ years of Go" and "2+ years of auth" gives 4)."""
+    """The strictest experience requirement stated in the advert (e.g. "4+ years of Go" and "2+ years of auth" gives 4).
+    Number words ("two years' experience") count too."""
+    text = _WORD_YEARS.sub(lambda m: str(_NUMBER_WORDS[m.group(1).lower()]), text or "")
+    text = re.sub(r"\b(\d{1,2})\s*\(\d{1,2}\)", r"\1", text)     # "three (3) years" -> "3 years"
     values = [int(m.group(1)) for m in YEARS.finditer(text or "")] + [int(m.group(1)) for m in YEARS_PLUS.finditer(text or "")]
     values = [v for v in values if v <= 15]
     return max(values) if values else None

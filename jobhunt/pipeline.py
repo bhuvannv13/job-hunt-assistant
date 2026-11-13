@@ -48,6 +48,15 @@ def collect(companies: list[dict], workers: int = 8) -> tuple[list[Job], dict[st
     return out, counts
 
 
+def fetch_failed(jobs: list[Job], counts: dict[str, int]) -> bool:
+    """True when the run returned nothing because the boards could not be reached, not because
+    they were empty: no jobs at all and at least half of the boards errored."""
+    if jobs or not counts:
+        return not jobs and not counts
+    failed = sum(1 for v in counts.values() if v < 0)
+    return failed * 2 >= len(counts)
+
+
 def check_trust(jobs: list[Job], company_status: dict[str, dict]) -> list[Job]:
     for job in jobs:
         job.trust, job.trust_evidence = verify.assess(job, company_status.get(job.company))

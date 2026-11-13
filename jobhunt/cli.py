@@ -96,6 +96,10 @@ def cmd_fetch(args):
     from .sources import aggregators
     queries = ["graduate data analyst", "graduate data engineer", "junior data scientist", "graduate machine learning", "trust and safety"]
     jobs += aggregators.fetch_adzuna(queries) + aggregators.fetch_jooble(queries)
+    if pipeline.fetch_failed(jobs, counts) and Path(args.out).exists():
+        # A network outage or blocked proxy looks like "no jobs anywhere"; keep the last good list.
+        print(f"Every board failed and no jobs came back; kept the existing {args.out} unchanged.")
+        raise SystemExit(1)
     pipeline.check_trust(jobs, company_status(status_path))
     prefs = pipeline.load_preferences(args.prefs)
     n = pipeline.publish_jobs(jobs, prefs, args.out, counts)
@@ -287,10 +291,12 @@ def cmd_workauth(args):
     from . import workauth
     text = Path(args.input).read_text(encoding="utf-8") if args.input else sys.stdin.read()
     found = workauth.restrictions(text)
-    blocked = workauth.blocker(text, args.permit) if args.permit else None
+    blocked = workauth.blocker(text, args.permit, args.country) if args.permit else None
+    abroad = bool(args.permit and args.country and workauth.effective_permit(args.permit, args.country) == "needs_sponsorship"
+                  and workauth.normalise_permit(args.permit) in workauth.IRISH_PERMITS)
     if args.json:
         print(json.dumps({"restrictions": [{"kind": r.kind, "label": r.label, "evidence": r.evidence} for r in found],
-                          "blocked": blocked.label if blocked else None}, indent=1))
+                          "blocked": blocked.label if blocked else None, "needs_sponsorship_abroad": abroad}, indent=1))
         return
     if not found:
         print("No right-to-work restrictions found in the advert.")
@@ -298,6 +304,9 @@ def cmd_workauth(args):
         print(f"- {r.label}: \"{r.evidence}\"")
     if args.permit:
         print(f"\nVerdict for {args.permit}: " + (f"DO NOT APPLY ({blocked.label})" if blocked else "no blocker found"))
+        if abroad:
+            print(f"Note: {args.permit} gives no right to work in {args.country}; this job needs visa sponsorship. "
+                  "Answer sponsorship questions with Yes.")
 
 
 def cmd_patterns(args):
@@ -420,6 +429,7 @@ def main(argv=None):
     w = sub.add_parser("workauth", help="find right-to-work restrictions (Stamp 4 only, excludes Stamp 1G, no sponsorship...)")
     w.add_argument("--in", dest="input", help="posting text file (default: read stdin)")
     w.add_argument("--permit", help="your permission, e.g. 'Stamp 1G', 'Stamp 4', 'EU', 'needs sponsorship'")
+    w.add_argument("--country", help="country the job is in; an Irish stamp counts as needing sponsorship abroad")
     w.add_argument("--json", action="store_true")
     w.set_defaults(func=cmd_workauth)
 
