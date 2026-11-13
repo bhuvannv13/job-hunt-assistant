@@ -116,3 +116,90 @@ def test_ats_flags_lost_digits_and_dots(tmp_path):
     f.write_text("Experienced analyst. " * 30 + " me@gmailcom")
     problems = " ".join(ats.check(f).problems)
     assert "No digits" in problems
+
+
+# --- fetch must not wipe the job list when the network is down ---------------------------------
+
+def test_fetch_failed_when_all_boards_error():
+    from jobhunt.pipeline import fetch_failed
+    assert fetch_failed([], {"a": -1, "b": -1})
+    assert fetch_failed([], {"a": -1, "b": 0})          # half failed, nothing returned
+    assert fetch_failed([], {})                         # nothing was even tried
+
+
+def test_fetch_not_failed_when_boards_are_just_empty_or_jobs_returned():
+    from jobhunt.models import Job
+    from jobhunt.pipeline import fetch_failed
+    assert not fetch_failed([], {"a": 0, "b": 0, "c": -1})
+    job = Job(source="test", title="Graduate Data Analyst", company="X", location="Dublin", url="https://x", description="")
+    assert not fetch_failed([job], {"a": -1, "b": -1})
+
+
+def test_cli_fetch_keeps_existing_file_when_offline(tmp_path, monkeypatch):
+    import argparse
+    from jobhunt import cli, pipeline
+    from jobhunt.sources import aggregators
+    out = tmp_path / "jobs.json"
+    out.write_text('{"jobs":[{"title":"keep me"}]}', encoding="utf-8")
+    monkeypatch.setattr(pipeline, "collect", lambda companies: ([], {"a": -1, "b": -1}))
+    monkeypatch.setattr(aggregators, "fetch_adzuna", lambda q: [])
+    monkeypatch.setattr(aggregators, "fetch_jooble", lambda q: [])
+    args = argparse.Namespace(companies=str(pipeline.ROOT / "config" / "companies.yaml"),
+                              status=str(tmp_path / "none.json"), prefs=None, out=str(out))
+    import pytest
+    with pytest.raises(SystemExit):
+        cli.cmd_fetch(args)
+    assert "keep me" in out.read_text(encoding="utf-8")
+
+
+# --- real advert wording found while testing on live postings (Nov 2026) -----------------------
+
+import pytest as _pytest
+
+
+@_pytest.mark.parametrize("text,country,expected", [
+    ("Applicants must have an existing right to work in Ireland without the requirement for employment "
+     "permit sponsorship to be considered for this role.", "Ireland", None),
+    ("A legal right to work in the UK.", "UK", "foreign_right_to_work"),
+    ("Relocation is welcome, however you must be based in the UK and be a British Citizen.", "UK", "nationality_required"),
+    ("UK nationals only, no visa sponsorship", "UK", "no_sponsorship"),
+    ("French nationality required (legal obligations).", "France", "nationality_required"),
+    ("Candidates must be eligible to work in Ireland/EU.", "Ireland", None),
+    ("We offer visa sponsorship for the right candidate.", "UK", None),
+])
+def test_workauth_real_adverts(text, country, expected):
+    from jobhunt.workauth import blocker
+    found = blocker(text, "Stamp 1G", country)
+    assert (found.kind if found else None) == expected
+
+
+def test_irish_stamp_needs_sponsorship_abroad():
+    from jobhunt.workauth import blocker, effective_permit
+    assert effective_permit("Stamp 1G", "United Kingdom") == "needs_sponsorship"
+    assert effective_permit("Stamp 1G", "Dublin, Ireland") == "stamp1g"
+    assert effective_permit("Stamp 1G") == "stamp1g"
+    advert = "Unfortunately we cannot offer visa sponsorship."
+    assert blocker(advert, "Stamp 1G") is None                     # fine in Ireland
+    assert blocker(advert, "Stamp 1G", "Netherlands").kind == "no_sponsorship"
+
+
+@_pytest.mark.parametrize("text,years", [
+    ("A minimum of two years' relevant experience in data analysis", 2),
+    ("1 - 2 years' Data Analysis experience", 1),
+    ("Three (3) years of experience with SQL", 3),
+    ("3 years’ experience as a data engineer", 3),
+    ("We are two years old and growing", None),
+    ("Ten years ago we started", None),
+])
+def test_required_years_words_and_apostrophes(text, years):
+    from jobhunt.match import required_years
+    assert required_years(text) == years
+
+
+def test_workauth_cli_country_note(tmp_path, capsys):
+    from jobhunt import cli
+    posting = tmp_path / "p.md"
+    posting.write_text("Junior data analyst in London. Python and SQL.", encoding="utf-8")
+    cli.main(["workauth", "--in", str(posting), "--permit", "Stamp 1G", "--country", "UK"])
+    out = capsys.readouterr().out
+    assert "no blocker found" in out and "needs visa sponsorship" in out
