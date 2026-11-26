@@ -1,5 +1,5 @@
 {
- "checked": "2026-11-25T15:48+00:00",
+ "checked": "2026-11-26T15:28+00:00",
  "companies": [
   {
    "name": "Stripe",
@@ -7,11 +7,11 @@
    "token": "stripe",
    "website": "stripe.com",
    "board_ok": true,
-   "jobs_total": 772,
-   "jobs_ireland": 99,
+   "jobs_total": 769,
+   "jobs_ireland": 98,
    "links_board": true,
    "careers_page": "https://stripe.com/careers",
-   "checked": "2026-11-25"
+   "checked": "2026-11-26"
   },
   {
    "name": "Intercom",
@@ -19,11 +19,11 @@
    "token": "intercom",
    "website": "intercom.com",
    "board_ok": true,
-   "jobs_total": 126,
-   "jobs_ireland": 63,
+   "jobs_total": 133,
+   "jobs_ireland": 68,
    "links_board": true,
    "careers_page": "https://fin.ai/careers",
-   "checked": "2026-11-25"
+   "checked": "2026-11-26"
   },
   {
    "name": "Datadog",
@@ -31,11 +31,11 @@
    "token": "datadog",
    "website": "datadoghq.com",
    "board_ok": true,
-   "jobs_total": 387,
-   "jobs_ireland": 26,
+   "jobs_total": 391,
+   "jobs_ireland": 25,
    "links_board": true,
    "careers_page": "https://careers.datadoghq.com",
-   "checked": "2026-11-25"
+   "checked": "2026-11-26"
   },
   {
    "name": "Cloudflare",
@@ -43,11 +43,11 @@
    "token": "cloudflare",
    "website": "cloudflare.com",
    "board_ok": true,
-   "jobs_total": 518,
+   "jobs_total": 525,
    "jobs_ireland": 0,
    "links_board": false,
    "careers_page": "https://www.cloudflare.com/careers/",
-   "checked": "2026-11-25"
+   "checked": "2026-11-26"
   },
   {
    "name": "MongoDB",
@@ -59,7 +59,7 @@
    "jobs_ireland": 76,
    "links_board": true,
    "careers_page": "https://www.mongodb.com:443/",
-   "checked": "2026-11-25"
+   "checked": "2026-11-26"
   },
   {
    "name": "Squarespace",
@@ -71,7 +71,7 @@
    "jobs_ireland": 3,
    "links_board": true,
    "careers_page": "https://www.squarespace.com/about/careers",
-   "checked": "2026-11-25"
+   "checked": "2026-11-26"
   },
   {
    "name": "GitLab",
@@ -79,11 +79,11 @@
    "token": "gitlab",
    "website": "gitlab.com",
    "board_ok": true,
-   "jobs_total": 245,
+   "jobs_total": 242,
    "jobs_ireland": 9,
    "links_board": false,
    "careers_page": "https://about.gitlab.com/jobs/",
-   "checked": "2026-11-25"
+   "checked": "2026-11-26"
   },
   {
    "name": "Toast",
@@ -92,10 +92,10 @@
    "website": "toasttab.com",
    "board_ok": true,
    "jobs_total": 300,
-   "jobs_ireland": 33,
+   "jobs_ireland": 34,
    "links_board": true,
    "careers_page": "https://careers.toasttab.com/",
-   "checked": "2026-11-25"
+   "checked": "2026-11-26"
   },
   {
    "name": "Dropbox",
@@ -107,7 +107,7 @@
    "jobs_ireland": 6,
    "links_board": true,
    "careers_page": "https://www.dropbox.jobs/en/",
-   "checked": "2026-11-25"
+   "checked": "2026-11-26"
   },
   {
    "name": "Airbnb",
@@ -115,11 +115,11 @@
    "token": "airbnb",
    "website": "airbnb.com",
    "board_ok": true,
-   "jobs_total": 198,
+   "jobs_total": 199,
    "jobs_ireland": 13,
    "links_board": true,
    "careers_page": "https://careers.airbnb.com/",
-   "checked": "2026-11-25"
+   "checked": "2026-11-26"
   },
   {
    "name": "Pinterest",
@@ -127,11 +127,11 @@
    "token": "pinterest",
    "website": "pinterest.com",
    "board_ok": true,
-   "jobs_total": 166,
+   "jobs_total": 167,
    "jobs_ireland": 7,
    "links_board": false,
    "careers_page": "https://www.pinterestcareers.com/",
-   "checked": "2026-11-25"
+   "checked": "2026-11-26"
   },
   {
    "name": "Reddit",
@@ -139,11 +139,11 @@
    "token": "reddit",
    "website": "reddit.com",
    "board_ok": true,
-   "jobs_total": 146,
+   "jobs_total": 149,
    "jobs_ireland": 5,
    "links_board": true,
    "careers_page": "https://redditinc.com/careers",
-   "checked": "2026-11-25"
+   "checked": "2026-11-26"
   },
   {
    "name": "Twilio",
@@ -151,11 +151,11 @@
    "token": "twilio",
    "website": "twilio.com",
    "board_ok": true,
-   "jobs_total": 110,
-   "jobs_ireland": 7,
+   "jobs_total": 113,
+   "jobs_ireland": 10,
    "links_board": false,
    "careers_page": "https://jobs.twilio.com/careers",
-   "checked": "2026-11-25"
+   "checked": "2026-11-26"
   },
   {
    "name": "Okta",
@@ -163,11 +163,11 @@
    "token": "okta",
    "website": "okta.com",
    "board_ok": true,
-   "jobs_total": 368,
-   "jobs_ireland": 20,
+   "jobs_total": 360,
+   "jobs_ireland": 19,
    "links_board": true,
    "careers_page": "https://jobs.okta.com/",
-   "checked": "2026-11-25"
+   "checked": "2026-11-26"
   },
   {
    "name": "Coinbase",
@@ -175,11 +175,11 @@
    "token": "coinbase",
    "website": "coinbase.com",
    "board_ok": true,
-   "jobs_total": 246,
-   "jobs_ireland": 4,
+   "jobs_total": 257,
+   "jobs_ireland": 7,
    "links_board": true,
    "careers_page": "https://www.coinbase.com/careers",
-   "checked": "2026-11-25"
+   "checked": "2026-11-26"
   },
   {
    "name": "Figma",
@@ -187,11 +187,11 @@
    "token": "figma",
    "website": "figma.com",
    "board_ok": true,
-   "jobs_total": 145,
+   "jobs_total": 141,
    "jobs_ireland": 0,
    "links_board": true,
    "careers_page": "https://www.figma.com/careers/",
-   "checked": "2026-11-25"
+   "checked": "2026-11-26"
   },
   {
    "name": "Samsara",
@@ -199,11 +199,11 @@
    "token": "samsara",
    "website": "samsara.com",
    "board_ok": true,
-   "jobs_total": 295,
+   "jobs_total": 300,
    "jobs_ireland": 5,
    "links_board": true,
    "careers_page": "https://www.samsara.com/company/careers",
-   "checked": "2026-11-25"
+   "checked": "2026-11-26"
   },
   {
    "name": "Databricks",
@@ -211,11 +211,11 @@
    "token": "databricks",
    "website": "databricks.com",
    "board_ok": true,
-   "jobs_total": 875,
+   "jobs_total": 880,
    "jobs_ireland": 6,
    "links_board": true,
    "careers_page": "https://jobs.databricks.com/login",
-   "checked": "2026-11-25"
+   "checked": "2026-11-26"
   },
   {
    "name": "Qualtrics",
@@ -223,11 +223,11 @@
    "token": "qualtrics",
    "website": "qualtrics.com",
    "board_ok": true,
-   "jobs_total": 178,
+   "jobs_total": 176,
    "jobs_ireland": 4,
    "links_board": true,
    "careers_page": "https://jobs.qualtrics.com/login",
-   "checked": "2026-11-25"
+   "checked": "2026-11-26"
   },
   {
    "name": "Anthropic",
@@ -235,11 +235,11 @@
    "token": "anthropic",
    "website": "anthropic.com",
    "board_ok": true,
-   "jobs_total": 635,
+   "jobs_total": 634,
    "jobs_ireland": 10,
    "links_board": true,
    "careers_page": "https://www.anthropic.com/careers/jobs",
-   "checked": "2026-11-25"
+   "checked": "2026-11-26"
   },
   {
    "name": "Tines",
@@ -247,11 +247,11 @@
    "token": "tines",
    "website": "tines.com",
    "board_ok": true,
-   "jobs_total": 32,
+   "jobs_total": 31,
    "jobs_ireland": 8,
    "links_board": false,
    "careers_page": "https://www.tines.com/careers/",
-   "checked": "2026-11-25"
+   "checked": "2026-11-26"
   },
   {
    "name": "Flipdish",
@@ -263,7 +263,7 @@
    "jobs_ireland": 4,
    "links_board": true,
    "careers_page": "https://www.flipdish.com/careers",
-   "checked": "2026-11-25"
+   "checked": "2026-11-26"
   },
   {
    "name": "Elastic",
@@ -271,11 +271,11 @@
    "token": "elastic",
    "website": "elastic.co",
    "board_ok": true,
-   "jobs_total": 389,
-   "jobs_ireland": 24,
+   "jobs_total": 377,
+   "jobs_ireland": 23,
    "links_board": true,
    "careers_page": "https://jobs.elastic.co/",
-   "checked": "2026-11-25"
+   "checked": "2026-11-26"
   },
   {
    "name": "Duolingo",
@@ -283,11 +283,11 @@
    "token": "duolingo",
    "website": "duolingo.com",
    "board_ok": true,
-   "jobs_total": 53,
+   "jobs_total": 54,
    "jobs_ireland": 0,
    "links_board": true,
    "careers_page": "https://careers.duolingo.com",
-   "checked": "2026-11-25"
+   "checked": "2026-11-26"
   },
   {
    "name": "Glean",
@@ -295,11 +295,11 @@
    "token": "gleanwork",
    "website": "glean.com",
    "board_ok": true,
-   "jobs_total": 122,
+   "jobs_total": 121,
    "jobs_ireland": 0,
    "links_board": false,
    "careers_page": "https://www.glean.com/careers",
-   "checked": "2026-11-25"
+   "checked": "2026-11-26"
   },
   {
    "name": "Vercel",
@@ -311,7 +311,7 @@
    "jobs_ireland": 0,
    "links_board": true,
    "careers_page": "https://vercel.com/careers",
-   "checked": "2026-11-25"
+   "checked": "2026-11-26"
   },
   {
    "name": "Grafana Labs",
@@ -319,11 +319,11 @@
    "token": "grafanalabs",
    "website": "grafana.com",
    "board_ok": true,
-   "jobs_total": 138,
+   "jobs_total": 137,
    "jobs_ireland": 55,
    "links_board": true,
    "careers_page": "https://grafana.com/careers/",
-   "checked": "2026-11-25"
+   "checked": "2026-11-26"
   },
   {
    "name": "Contentful",
@@ -335,7 +335,7 @@
    "jobs_ireland": 1,
    "links_board": null,
    "careers_page": "",
-   "checked": "2026-11-25"
+   "checked": "2026-11-26"
   },
   {
    "name": "Trustpilot",
@@ -347,7 +347,7 @@
    "jobs_ireland": 0,
    "links_board": true,
    "careers_page": "https://corporate.trustpilot.com/careers",
-   "checked": "2026-11-25"
+   "checked": "2026-11-26"
   },
   {
    "name": "Wise",
@@ -359,7 +359,7 @@
    "jobs_ireland": 0,
    "links_board": false,
    "careers_page": "https://wise.jobs/",
-   "checked": "2026-11-25"
+   "checked": "2026-11-26"
   },
   {
    "name": "Monzo",
@@ -367,11 +367,11 @@
    "token": "monzo",
    "website": "monzo.com",
    "board_ok": true,
-   "jobs_total": 53,
+   "jobs_total": 57,
    "jobs_ireland": 4,
    "links_board": true,
    "careers_page": "https://monzo.com/careers",
-   "checked": "2026-11-25"
+   "checked": "2026-11-26"
   },
   {
    "name": "Deliveroo",
@@ -379,11 +379,11 @@
    "token": "deliveroo",
    "website": "deliveroo.co.uk",
    "board_ok": true,
-   "jobs_total": 193,
+   "jobs_total": 191,
    "jobs_ireland": 4,
    "links_board": false,
    "careers_page": "https://careers.deliveroo.co.uk/",
-   "checked": "2026-11-25"
+   "checked": "2026-11-26"
   },
   {
    "name": "Klaviyo",
@@ -391,11 +391,11 @@
    "token": "klaviyo",
    "website": "klaviyo.com",
    "board_ok": true,
-   "jobs_total": 120,
-   "jobs_ireland": 9,
+   "jobs_total": 124,
+   "jobs_ireland": 13,
    "links_board": true,
    "careers_page": "https://www.klaviyo.com/careers",
-   "checked": "2026-11-25"
+   "checked": "2026-11-26"
   },
   {
    "name": "PagerDuty",
@@ -403,11 +403,11 @@
    "token": "pagerduty",
    "website": "pagerduty.com",
    "board_ok": true,
-   "jobs_total": 48,
+   "jobs_total": 49,
    "jobs_ireland": 0,
    "links_board": false,
    "careers_page": "https://careers.pagerduty.com/",
-   "checked": "2026-11-25"
+   "checked": "2026-11-26"
   },
   {
    "name": "Udemy",
@@ -419,7 +419,7 @@
    "jobs_ireland": 0,
    "links_board": null,
    "careers_page": "",
-   "checked": "2026-11-25"
+   "checked": "2026-11-26"
   },
   {
    "name": "Doctolib",
@@ -431,7 +431,7 @@
    "jobs_ireland": 0,
    "links_board": null,
    "careers_page": "",
-   "checked": "2026-11-25"
+   "checked": "2026-11-26"
   },
   {
    "name": "Wrike",
@@ -439,11 +439,11 @@
    "token": "wrike",
    "website": "wrike.com",
    "board_ok": true,
-   "jobs_total": 61,
+   "jobs_total": 59,
    "jobs_ireland": 6,
    "links_board": true,
    "careers_page": "https://www.wrike.com/jobs/",
-   "checked": "2026-11-25"
+   "checked": "2026-11-26"
   },
   {
    "name": "Palantir",
@@ -455,7 +455,7 @@
    "jobs_ireland": 0,
    "links_board": true,
    "careers_page": "https://www.palantir.com/careers",
-   "checked": "2026-11-25"
+   "checked": "2026-11-26"
   },
   {
    "name": "Spotify",
@@ -463,11 +463,11 @@
    "token": "spotify",
    "website": "spotify.com",
    "board_ok": true,
-   "jobs_total": 92,
+   "jobs_total": 97,
    "jobs_ireland": 1,
    "links_board": false,
    "careers_page": "https://www.spotify.com/us/work-with-us/",
-   "checked": "2026-11-25"
+   "checked": "2026-11-26"
   },
   {
    "name": "Kpler",
@@ -475,11 +475,11 @@
    "token": "kpler",
    "website": "kpler.com",
    "board_ok": true,
-   "jobs_total": 106,
+   "jobs_total": 108,
    "jobs_ireland": 0,
    "links_board": true,
    "careers_page": "https://www.kpler.com/company/careers",
-   "checked": "2026-11-25"
+   "checked": "2026-11-26"
   },
   {
    "name": "Swile",
@@ -491,7 +491,7 @@
    "jobs_ireland": 0,
    "links_board": false,
    "careers_page": "https://www.swile.co/careers",
-   "checked": "2026-11-25"
+   "checked": "2026-11-26"
   },
   {
    "name": "Ramp",
@@ -499,11 +499,11 @@
    "token": "ramp",
    "website": "ramp.com",
    "board_ok": true,
-   "jobs_total": 182,
+   "jobs_total": 183,
    "jobs_ireland": 0,
    "links_board": true,
    "careers_page": "https://ramp.com/careers",
-   "checked": "2026-11-25"
+   "checked": "2026-11-26"
   },
   {
    "name": "Linear",
@@ -515,7 +515,7 @@
    "jobs_ireland": 8,
    "links_board": true,
    "careers_page": "https://linear.app/careers",
-   "checked": "2026-11-25"
+   "checked": "2026-11-26"
   },
   {
    "name": "OpenAI",
@@ -527,7 +527,7 @@
    "jobs_ireland": 23,
    "links_board": false,
    "careers_page": "https://openai.com/careers/",
-   "checked": "2026-11-25"
+   "checked": "2026-11-26"
   },
   {
    "name": "Notion",
@@ -535,11 +535,11 @@
    "token": "notion",
    "website": "notion.so",
    "board_ok": true,
-   "jobs_total": 173,
+   "jobs_total": 174,
    "jobs_ireland": 37,
    "links_board": true,
    "careers_page": "https://www.notion.com/careers",
-   "checked": "2026-11-25"
+   "checked": "2026-11-26"
   },
   {
    "name": "PostHog",
@@ -551,7 +551,7 @@
    "jobs_ireland": 1,
    "links_board": false,
    "careers_page": "https://posthog.com/careers",
-   "checked": "2026-11-25"
+   "checked": "2026-11-26"
   },
   {
    "name": "Evervault",
@@ -563,7 +563,7 @@
    "jobs_ireland": 0,
    "links_board": false,
    "careers_page": "https://evervault.com/careers",
-   "checked": "2026-11-25"
+   "checked": "2026-11-26"
   },
   {
    "name": "Cohere",
@@ -571,11 +571,11 @@
    "token": "cohere",
    "website": "cohere.com",
    "board_ok": true,
-   "jobs_total": 122,
+   "jobs_total": 123,
    "jobs_ireland": 4,
    "links_board": true,
    "careers_page": "https://cohere.com/careers",
-   "checked": "2026-11-25"
+   "checked": "2026-11-26"
   },
   {
    "name": "ElevenLabs",
@@ -583,11 +583,11 @@
    "token": "elevenlabs",
    "website": "elevenlabs.io",
    "board_ok": true,
-   "jobs_total": 117,
+   "jobs_total": 112,
    "jobs_ireland": 16,
    "links_board": false,
    "careers_page": "https://elevenlabs.io/careers",
-   "checked": "2026-11-25"
+   "checked": "2026-11-26"
   },
   {
    "name": "Synthesia",
@@ -595,11 +595,11 @@
    "token": "synthesia",
    "website": "synthesia.io",
    "board_ok": true,
-   "jobs_total": 24,
+   "jobs_total": 22,
    "jobs_ireland": 5,
    "links_board": true,
    "careers_page": "https://www.synthesia.io:443/careers",
-   "checked": "2026-11-25"
+   "checked": "2026-11-26"
   },
   {
    "name": "Supabase",
@@ -607,11 +607,11 @@
    "token": "supabase",
    "website": "supabase.com",
    "board_ok": true,
-   "jobs_total": 81,
-   "jobs_ireland": 52,
+   "jobs_total": 83,
+   "jobs_ireland": 53,
    "links_board": true,
    "careers_page": "https://supabase.com/careers",
-   "checked": "2026-11-25"
+   "checked": "2026-11-26"
   },
   {
    "name": "Multiverse",
@@ -619,11 +619,11 @@
    "token": "multiverse",
    "website": "multiverse.io",
    "board_ok": true,
-   "jobs_total": 23,
+   "jobs_total": 22,
    "jobs_ireland": 0,
    "links_board": true,
    "careers_page": "https://www.multiverse.io/careers/were-hiring",
-   "checked": "2026-11-25"
+   "checked": "2026-11-26"
   },
   {
    "name": "Kota",
@@ -635,7 +635,7 @@
    "jobs_ireland": 13,
    "links_board": true,
    "careers_page": "https://kota.io/careers",
-   "checked": "2026-11-25"
+   "checked": "2026-11-26"
   },
   {
    "name": "Hex",
@@ -647,7 +647,7 @@
    "jobs_ireland": 0,
    "links_board": false,
    "careers_page": "https://hex.tech/",
-   "checked": "2026-11-25"
+   "checked": "2026-11-26"
   },
   {
    "name": "Fin",
@@ -659,7 +659,7 @@
    "jobs_ireland": 0,
    "links_board": false,
    "careers_page": "https://fin.ai/careers",
-   "checked": "2026-11-25"
+   "checked": "2026-11-26"
   },
   {
    "name": "Visa",
@@ -671,7 +671,7 @@
    "jobs_ireland": 0,
    "links_board": null,
    "careers_page": "",
-   "checked": "2026-11-25"
+   "checked": "2026-11-26"
   },
   {
    "name": "ServiceNow",
@@ -683,7 +683,7 @@
    "jobs_ireland": 22,
    "links_board": false,
    "careers_page": "https://careers.servicenow.com/",
-   "checked": "2026-11-25"
+   "checked": "2026-11-26"
   },
   {
    "name": "Bosch",
@@ -695,7 +695,7 @@
    "jobs_ireland": 0,
    "links_board": null,
    "careers_page": "",
-   "checked": "2026-11-25"
+   "checked": "2026-11-26"
   },
   {
    "name": "Equinix",
@@ -707,7 +707,7 @@
    "jobs_ireland": 0,
    "links_board": null,
    "careers_page": "",
-   "checked": "2026-11-25"
+   "checked": "2026-11-26"
   },
   {
    "name": "Version 1",
@@ -715,11 +715,11 @@
    "token": "Version1",
    "website": "version1.com",
    "board_ok": true,
-   "jobs_total": 44,
-   "jobs_ireland": 44,
+   "jobs_total": 43,
+   "jobs_ireland": 43,
    "links_board": false,
    "careers_page": "https://www.version1.com/careers/",
-   "checked": "2026-11-25"
+   "checked": "2026-11-26"
   },
   {
    "name": "Ubisoft",
@@ -731,7 +731,7 @@
    "jobs_ireland": 0,
    "links_board": null,
    "careers_page": "",
-   "checked": "2026-11-25"
+   "checked": "2026-11-26"
   },
   {
    "name": "Wolters Kluwer",
@@ -743,7 +743,7 @@
    "jobs_ireland": 0,
    "links_board": null,
    "careers_page": "",
-   "checked": "2026-11-25"
+   "checked": "2026-11-26"
   },
   {
    "name": "Experian",
@@ -755,7 +755,7 @@
    "jobs_ireland": 0,
    "links_board": null,
    "careers_page": "",
-   "checked": "2026-11-25"
+   "checked": "2026-11-26"
   },
   {
    "name": "Sky",
@@ -767,7 +767,7 @@
    "jobs_ireland": 0,
    "links_board": null,
    "careers_page": "",
-   "checked": "2026-11-25"
+   "checked": "2026-11-26"
   },
   {
    "name": "Abbott",
@@ -779,7 +779,7 @@
    "jobs_ireland": 0,
    "links_board": null,
    "careers_page": "",
-   "checked": "2026-11-25"
+   "checked": "2026-11-26"
   }
  ]
 }
